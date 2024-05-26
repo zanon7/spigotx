@@ -1,4 +1,4 @@
-package com.minexd.spigot;
+package com.minexd.spigot.config;
 
 import com.google.common.base.Throwables;
 
@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Level;
 
+import com.minexd.spigot.SpigotXBridge;
 import lombok.Getter;
 import lombok.Setter;
 

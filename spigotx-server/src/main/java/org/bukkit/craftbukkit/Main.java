@@ -65,6 +65,46 @@ public class Main {
                         .ofType(Integer.class)
                         .describedAs("Server size");
 
+                acceptsAll(asList("allow-flight"), "Whether the server allows flight")
+                        .withRequiredArg()
+                        .ofType(Boolean.class)
+                        .describedAs("Allow Flight");
+
+                acceptsAll(asList("allow-nether"), "Whether the server allows the nether")
+                        .withRequiredArg()
+                        .ofType(Boolean.class)
+                        .describedAs("Allow Nether");
+
+                acceptsAll(asList("announce-player-achievements"),"Whether to announce player achievements")
+                        .withRequiredArg()
+                        .ofType(Boolean.class)
+                        .describedAs("Announce Player Achievements");
+
+                acceptsAll(asList("pvp"), "Whether to enable pvp")
+                        .withRequiredArg()
+                        .ofType(Boolean.class)
+                        .describedAs("PVP");
+
+                acceptsAll(asList("gamemode"), "Default gamemode")
+                        .withRequiredArg()
+                        .ofType(Integer.class)
+                        .describedAs("Gamemode");
+
+                acceptsAll(asList("network-compression-threshold"), "Network compression threshold")
+                        .withRequiredArg()
+                        .ofType(Integer.class)
+                        .describedAs("Network Compression Threshold");
+
+                acceptsAll(asList("view-distance"), "Server View Distance")
+                        .withRequiredArg()
+                        .ofType(Integer.class)
+                        .describedAs("View Distance");
+
+                acceptsAll(asList("difficulty"), "Server Difficulty")
+                        .withRequiredArg()
+                        .ofType(Integer.class)
+                        .describedAs("difficulty");
+
                 acceptsAll(asList("d", "date-format"), "Format of the date to display in the console (for log entries)")
                         .withRequiredArg()
                         .ofType(SimpleDateFormat.class)
@@ -96,12 +136,6 @@ public class Main {
 
                 acceptsAll(asList("log-strip-color"), "Strips color codes from log file");
 
-                acceptsAll(asList("b", "bukkit-settings"), "File for bukkit settings")
-                        .withRequiredArg()
-                        .ofType(File.class)
-                        .defaultsTo(new File("bukkit.yml"))
-                        .describedAs("Yml file");
-
                 acceptsAll(asList("C", "commands-settings"), "File for command settings")
                         .withRequiredArg()
                         .ofType(File.class)
@@ -116,21 +150,13 @@ public class Main {
 
                 acceptsAll(asList("demo"), "Demo mode");
 
-                // Spigot Start
-                acceptsAll(asList("S", "spigot-settings"), "File for spigot settings")
+                // SpigotX start
+                acceptsAll(asList("SX", "spigotx-settings"), "File for spigotx settings")
                         .withRequiredArg()
                         .ofType(File.class)
                         .defaultsTo(new File("spigot.yml"))
                         .describedAs("Yml file");
-                // Spigot End
-
-                // PaperSpigot Start
-                acceptsAll(asList("spigot", "spigot-settings"), "File for paperspigot settings")
-                        .withRequiredArg()
-                        .ofType(File.class)
-                        .defaultsTo(new File("spigot.yml"))
-                        .describedAs("Yml file");
-                // PaperSpigot End
+                // SpigotX End
             }
         };
 

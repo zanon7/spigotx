@@ -1,7 +1,9 @@
 package org.bukkit.craftbukkit;
 
 import com.minexd.spigot.SpigotX;
-import com.minexd.spigot.SpigotXConfig;
+import com.minexd.spigot.config.BukkitConfig;
+import com.minexd.spigot.config.SharedConfig;
+import com.minexd.spigot.config.SpigotXConfig;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -143,8 +145,6 @@ public final class CraftServer implements Server {
     protected final MinecraftServer console;
     protected final DedicatedPlayerList playerList;
     private final Map<String, World> worlds = new LinkedHashMap<>();
-    private YamlConfiguration configuration;
-    private YamlConfiguration commandsConfiguration;
     private final Yaml yaml = new Yaml(new SafeConstructor());
     private final Map<UUID, OfflinePlayer> offlinePlayers = new MapMaker().makeMap();
     private final EntityMetadataStore entityMetadata = new EntityMetadataStore();
@@ -167,7 +167,6 @@ public final class CraftServer implements Server {
     private final Pattern validUserPattern = Pattern.compile("^[a-zA-Z0-9_]{2,16}$");
     private final UUID invalidUserUUID = UUID.nameUUIDFromBytes("InvalidUsername".getBytes(Charsets.UTF_8));
     private final List<CraftPlayer> playerView;
-    public int reloadCount;
 
     private final class BooleanWrapper {
         private boolean value = true;
@@ -205,52 +204,18 @@ public final class CraftServer implements Server {
             getLogger().info("Console input is disabled due to --noconsole command argument");
         }
 
-        configuration = YamlConfiguration.loadConfiguration(getConfigFile());
-        configuration.options().copyDefaults(true);
-        configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
-        ConfigurationSection legacyAlias = null;
-        if (!configuration.isString("aliases")) {
-            legacyAlias = configuration.getConfigurationSection("aliases");
-            configuration.set("aliases", "now-in-commands.yml");
-        }
-        saveConfig();
-        if (getCommandsConfigFile().isFile()) {
-            legacyAlias = null;
-        }
-        commandsConfiguration = YamlConfiguration.loadConfiguration(getCommandsConfigFile());
-        commandsConfiguration.options().copyDefaults(true);
-        commandsConfiguration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/commands.yml"), Charsets.UTF_8)));
-        saveCommandsConfig();
+        SharedConfig.init((File) console.options.valueOf("spigotx-settings")); // SpigotX
 
-        // Migrate aliases from old file and add previously implicit $1- to pass all arguments
-        if (legacyAlias != null) {
-            ConfigurationSection aliases = commandsConfiguration.createSection("aliases");
-            for (String key : legacyAlias.getKeys(false)) {
-                ArrayList<String> commands = new ArrayList<String>();
-
-                if (legacyAlias.isList(key)) {
-                    for (String command : legacyAlias.getStringList(key)) {
-                        commands.add(command + " $1-");
-                    }
-                } else {
-                    commands.add(legacyAlias.getString(key) + " $1-");
-                }
-
-                aliases.set(key, commands);
-            }
-        }
-
-        saveCommandsConfig();
-        overrideAllCommandBlockCommands = commandsConfiguration.getStringList("command-block-overrides").contains("*");
-        ((SimplePluginManager) pluginManager).useTimings(configuration.getBoolean("settings.plugin-profiling"));
-        monsterSpawn = configuration.getInt("spawn-limits.monsters");
-        animalSpawn = configuration.getInt("spawn-limits.animals");
-        waterAnimalSpawn = configuration.getInt("spawn-limits.water-animals");
-        ambientSpawn = configuration.getInt("spawn-limits.ambient");
-        console.autoSavePeriod = configuration.getInt("ticks-per.autosave");
-        warningState = WarningState.value(configuration.getString("settings.deprecated-verbose"));
-        chunkGCPeriod = configuration.getInt("chunk-gc.period-in-ticks");
-        chunkGCLoadThresh = configuration.getInt("chunk-gc.load-threshold");
+        overrideAllCommandBlockCommands = SharedConfig.config.getStringList("commands.command-block-overrides").contains("*");
+        ((SimplePluginManager) pluginManager).useTimings(BukkitConfig.pluginProfiling);
+        monsterSpawn = BukkitConfig.monsterSpawnLimit;
+        animalSpawn = BukkitConfig.animalSpawnLimit;
+        waterAnimalSpawn = BukkitConfig.waterAnimalSpawnLimit;
+        ambientSpawn = BukkitConfig.ambientSpawnLimit;
+        console.autoSavePeriod = BukkitConfig.ticksPerAutosave;
+        warningState = WarningState.value(BukkitConfig.deprecatedVerbose);
+        chunkGCPeriod = BukkitConfig.chunkGCPeriodInTicks;
+        chunkGCLoadThresh = BukkitConfig.chunkGCLoadThreshold;
         loadIcon();
 
         // Spigot Start - Moved to old location of new DedicatedPlayerList in DedicatedServer
@@ -264,31 +229,7 @@ public final class CraftServer implements Server {
     }
 
     public boolean getCommandBlockOverride(String command) {
-        return overrideAllCommandBlockCommands || commandsConfiguration.getStringList("command-block-overrides").contains(command);
-    }
-
-    private File getConfigFile() {
-        return (File) console.options.valueOf("bukkit-settings");
-    }
-
-    private File getCommandsConfigFile() {
-        return (File) console.options.valueOf("commands-settings");
-    }
-
-    private void saveConfig() {
-        try {
-            configuration.save(getConfigFile());
-        } catch (IOException ex) {
-            Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, "Could not save " + getConfigFile(), ex);
-        }
-    }
-
-    private void saveCommandsConfig() {
-        try {
-            commandsConfiguration.save(getCommandsConfigFile());
-        } catch (IOException ex) {
-            Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, "Could not save " + getCommandsConfigFile(), ex);
-        }
+        return overrideAllCommandBlockCommands || SharedConfig.config.getStringList("commands.command-block-overrides").contains(command);
     }
 
     public void loadPlugins() {
@@ -530,7 +471,7 @@ public final class CraftServer implements Server {
 
     @Override
     public boolean getAllowEnd() {
-        return this.configuration.getBoolean("settings.allow-end");
+        return BukkitConfig.allowEnd;
     }
 
     @Override
@@ -539,11 +480,11 @@ public final class CraftServer implements Server {
     }
 
     public boolean getWarnOnOverload() {
-        return this.configuration.getBoolean("settings.warn-on-overload");
+        return BukkitConfig.warnOnOverload;
     }
 
     public boolean getQueryPlugins() {
-        return this.configuration.getBoolean("settings.query-plugins");
+        return BukkitConfig.queryPlugins;
     }
 
     @Override
@@ -568,12 +509,12 @@ public final class CraftServer implements Server {
 
     @Override
     public String getUpdateFolder() {
-        return this.configuration.getString("settings.update-folder", "update");
+        return BukkitConfig.updateFolder;
     }
 
     @Override
     public File getUpdateFolderFile() {
-        return new File((File) console.options.valueOf("plugins"), this.configuration.getString("settings.update-folder", "update"));
+        return new File((File) console.options.valueOf("plugins"), getUpdateFolder());
     }
 
     @Override
@@ -582,19 +523,19 @@ public final class CraftServer implements Server {
         if (org.spigotmc.SpigotConfig.bungee) {
             return -1;
         } else {
-            return this.configuration.getInt("settings.connection-throttle");
+            return BukkitConfig.connectionThrottle;
         }
         // Spigot End
     }
 
     @Override
     public int getTicksPerAnimalSpawns() {
-        return this.configuration.getInt("ticks-per.animal-spawns");
+        return BukkitConfig.ticksPerAnimalSpawn;
     }
 
     @Override
     public int getTicksPerMonsterSpawns() {
-        return this.configuration.getInt("ticks-per.monster-spawns");
+        return BukkitConfig.ticksPerMonsterSpawn;
     }
 
     @Override
@@ -686,108 +627,6 @@ public final class CraftServer implements Server {
         return false;
     }
 
-    @Override
-    public void reload() {
-        reloadCount++;
-        configuration = YamlConfiguration.loadConfiguration(getConfigFile());
-        commandsConfiguration = YamlConfiguration.loadConfiguration(getCommandsConfigFile());
-        PropertyManager config = new PropertyManager(console.options);
-
-        ((DedicatedServer) console).propertyManager = config;
-
-        boolean animals = config.getBoolean("spawn-animals", console.getSpawnAnimals());
-        boolean monsters = config.getBoolean("spawn-monsters", console.worlds.get(0).getDifficulty() != EnumDifficulty.PEACEFUL);
-        EnumDifficulty difficulty = EnumDifficulty.getById(config.getInt("difficulty", console.worlds.get(0).getDifficulty().ordinal()));
-
-        online.value = config.getBoolean("online-mode", console.getOnlineMode());
-        console.setSpawnAnimals(config.getBoolean("spawn-animals", console.getSpawnAnimals()));
-        console.setPVP(config.getBoolean("pvp", console.getPVP()));
-        console.setAllowFlight(config.getBoolean("allow-flight", console.getAllowFlight()));
-        console.setMotd(config.getString("motd", console.getMotd()));
-        monsterSpawn = configuration.getInt("spawn-limits.monsters");
-        animalSpawn = configuration.getInt("spawn-limits.animals");
-        waterAnimalSpawn = configuration.getInt("spawn-limits.water-animals");
-        ambientSpawn = configuration.getInt("spawn-limits.ambient");
-        warningState = WarningState.value(configuration.getString("settings.deprecated-verbose"));
-        printSaveWarning = false;
-        console.autoSavePeriod = configuration.getInt("ticks-per.autosave");
-        chunkGCPeriod = configuration.getInt("chunk-gc.period-in-ticks");
-        chunkGCLoadThresh = configuration.getInt("chunk-gc.load-threshold");
-        loadIcon();
-
-        try {
-            playerList.getIPBans().load();
-        } catch (IOException ex) {
-            logger.log(Level.WARNING, "Failed to load banned-ips.json, " + ex.getMessage());
-        }
-        try {
-            playerList.getProfileBans().load();
-        } catch (IOException ex) {
-            logger.log(Level.WARNING, "Failed to load banned-players.json, " + ex.getMessage());
-        }
-
-        org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
-        org.github.paperspigot.PaperSpigotConfig.init((File) console.options.valueOf("spigot-settings")); // PaperSpigot
-
-        // SpigotX
-        SpigotX.INSTANCE.setConfig(new SpigotXConfig());
-        SpigotX.INSTANCE.registerCommands();
-
-        for (WorldServer world : console.worlds) {
-            world.worldData.setDifficulty(difficulty);
-            world.setSpawnFlags(monsters, animals);
-            if (this.getTicksPerAnimalSpawns() < 0) {
-                world.ticksPerAnimalSpawns = 400;
-            } else {
-                world.ticksPerAnimalSpawns = this.getTicksPerAnimalSpawns();
-            }
-
-            if (this.getTicksPerMonsterSpawns() < 0) {
-                world.ticksPerMonsterSpawns = 1;
-            } else {
-                world.ticksPerMonsterSpawns = this.getTicksPerMonsterSpawns();
-            }
-            world.spigotConfig.init(); // Spigot
-            world.paperSpigotConfig.init(); // PaperSpigot
-        }
-
-        pluginManager.clearPlugins();
-        commandMap.clearCommands();
-        resetRecipes();
-        org.spigotmc.SpigotConfig.registerCommands(); // Spigot
-        org.github.paperspigot.PaperSpigotConfig.registerCommands(); // PaperSpigot
-
-        overrideAllCommandBlockCommands = commandsConfiguration.getStringList("command-block-overrides").contains("*");
-
-        int pollCount = 0;
-
-        // Wait for at most 2.5 seconds for plugins to close their threads
-        while (pollCount < 50 && getScheduler().getActiveWorkers().size() > 0) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {}
-            pollCount++;
-        }
-
-        List<BukkitWorker> overdueWorkers = getScheduler().getActiveWorkers();
-        for (BukkitWorker worker : overdueWorkers) {
-            Plugin plugin = worker.getOwner();
-            String author = "<NoAuthorGiven>";
-            if (plugin.getDescription().getAuthors().size() > 0) {
-                author = plugin.getDescription().getAuthors().get(0);
-            }
-            getLogger().log(Level.SEVERE, String.format(
-                "Nag author: '%s' of '%s' about the following: %s",
-                author,
-                plugin.getDescription().getName(),
-                "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"
-            ));
-        }
-        loadPlugins();
-        enablePlugins(PluginLoadOrder.STARTUP);
-        enablePlugins(PluginLoadOrder.POSTWORLD);
-    }
-
     private void loadIcon() {
         icon = new CraftIconCache(null);
         try {
@@ -802,7 +641,7 @@ public final class CraftServer implements Server {
 
     @SuppressWarnings({ "unchecked", "finally" })
     private void loadCustomPermissions() {
-        File file = new File(configuration.getString("settings.permissions-file"));
+        File file = new File(BukkitConfig.permissionsFile);
         FileInputStream stream;
 
         try {
@@ -1112,11 +951,11 @@ public final class CraftServer implements Server {
         Validate.notNull(config, "Config cannot be null");
 
         DataSourceConfig ds = new DataSourceConfig();
-        ds.setDriver(configuration.getString("database.driver"));
-        ds.setUrl(configuration.getString("database.url"));
-        ds.setUsername(configuration.getString("database.username"));
-        ds.setPassword(configuration.getString("database.password"));
-        ds.setIsolationLevel(TransactionIsolation.getLevel(configuration.getString("database.isolation")));
+        ds.setDriver(BukkitConfig.databaseDriver);
+        ds.setUrl(BukkitConfig.databaseUrl);
+        ds.setUsername(BukkitConfig.databaseUsername);
+        ds.setPassword(BukkitConfig.databasePassword);
+        ds.setIsolationLevel(TransactionIsolation.getLevel(BukkitConfig.databaseIsolation));
 
         if (ds.getDriver().contains("sqlite")) {
             config.setDatabasePlatform(new SQLitePlatform());
@@ -1187,7 +1026,7 @@ public final class CraftServer implements Server {
 
     @Override
     public Map<String, String[]> getCommandAliases() {
-        ConfigurationSection section = commandsConfiguration.getConfigurationSection("aliases");
+        ConfigurationSection section = SharedConfig.config.getConfigurationSection("commands.aliases");
         Map<String, String[]> result = new LinkedHashMap<String, String[]>();
 
         if (section != null) {
@@ -1207,18 +1046,13 @@ public final class CraftServer implements Server {
         return result;
     }
 
-    public void removeBukkitSpawnRadius() {
-        configuration.set("settings.spawn-radius", null);
-        saveConfig();
-    }
-
     public int getBukkitSpawnRadius() {
-        return configuration.getInt("settings.spawn-radius", -1);
+        return -1;
     }
 
     @Override
     public String getShutdownMessage() {
-        return configuration.getString("settings.shutdown-message");
+        return BukkitConfig.shutdownMessage;
     }
 
     @Override
@@ -1228,8 +1062,9 @@ public final class CraftServer implements Server {
 
     @Override
     public void setSpawnRadius(int value) {
-        configuration.set("settings.spawn-radius", value);
-        saveConfig();
+        PropertyManager propertyManager = ((DedicatedServer) console).propertyManager;
+        propertyManager.setProperty("spawn-protection", value);
+        propertyManager.savePropertiesFile();
     }
 
     @Override
@@ -1249,11 +1084,11 @@ public final class CraftServer implements Server {
 
     @Override
     public boolean useExactLoginLocation() {
-        return configuration.getBoolean("settings.use-exact-login-location");
+        return BukkitConfig.useExactLoginLocation;
     }
 
     public ChunkGenerator getGenerator(String world) {
-        ConfigurationSection section = configuration.getConfigurationSection("worlds");
+        ConfigurationSection section = BukkitConfig.getConfigurationSection("worlds");
         ChunkGenerator result = null;
 
         if (section != null) {
@@ -1306,6 +1141,11 @@ public final class CraftServer implements Server {
         net.minecraft.server.ItemStack stack = new net.minecraft.server.ItemStack(Items.MAP, 1, -1);
         WorldMap worldmap = Items.FILLED_MAP.getSavedMap(stack, ((CraftWorld) world).getHandle());
         return worldmap.mapView;
+    }
+
+    @Override
+    public void reload() {
+
     }
 
     @Override
@@ -1514,7 +1354,7 @@ public final class CraftServer implements Server {
         }
 
         if (container == null) {
-            container = new File(configuration.getString("settings.world-container", "."));
+            container = new File(BukkitConfig.worldContainer);
         }
 
         return container;
@@ -1809,7 +1649,7 @@ public final class CraftServer implements Server {
         @Override
         public YamlConfiguration getBukkitConfig()
         {
-            return configuration;
+            return BukkitConfig.config;
         }
 
         @Override

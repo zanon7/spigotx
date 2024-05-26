@@ -54,7 +54,7 @@ public class PropertyManager {
     }
 
     private <T> T getOverride(String name, T value) {
-        if ((this.options != null) && (this.options.has(name)) && !name.equals( "online-mode")) { // Spigot
+        if ((this.options != null) && (this.options.has(name))) { // Spigot
             return (T) this.options.valueOf(name);
         }
 

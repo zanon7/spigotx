@@ -2,108 +2,92 @@ package org.github.paperspigot;
 
 import java.util.List;
 
+import com.minexd.spigot.config.SharedConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class PaperSpigotWorldConfig {
 
-    private final String worldName;
-    private final YamlConfiguration config;
-    private boolean verbose;
+    private static YamlConfiguration config;
+    private static boolean verbose;
 
-    public PaperSpigotWorldConfig(String worldName) {
-        this.worldName = worldName;
-        this.config = PaperSpigotConfig.config;
-        init();
+    public static void init() {
+        config = SharedConfig.config;
+        verbose = getBoolean( "verbose", true );
+        SharedConfig.readConfig( PaperSpigotWorldConfig.class, null );
     }
 
-    public void init() {
-        this.verbose = getBoolean( "verbose", true );
-
-        PaperSpigotConfig.readConfig(PaperSpigotWorldConfig.class, this);
+    private static boolean getBoolean(String path, boolean def) {
+        config.addDefault( "paper.world-settings." + path, def );
+        return config.getBoolean( "paper.world-settings." + path, config.getBoolean( "paper.world-settings." + path ) );
     }
 
-    private void set(String path, Object val) {
-        config.set( "world-settings.default." + path, val );
+    private static double getDouble(String path, double def) {
+        config.addDefault( "paper.world-settings." + path, def );
+        return config.getDouble( "paper.world-settings." + path, config.getDouble( "paper.world-settings." + path ) );
     }
 
-    private boolean getBoolean(String path, boolean def) {
-        config.addDefault( "world-settings.default." + path, def );
-        return config.getBoolean( "world-settings." + worldName + "." + path, config.getBoolean( "world-settings.default." + path ) );
+    private static int getInt(String path, int def) {
+        config.addDefault( "paper.world-settings." + path, def );
+        return config.getInt( "paper.world-settings." + path, config.getInt( "paper.world-settings." + path ) );
     }
 
-    private double getDouble(String path, double def) {
-        config.addDefault( "world-settings.default." + path, def );
-        return config.getDouble( "world-settings." + worldName + "." + path, config.getDouble( "world-settings.default." + path ) );
-    }
-
-    private int getInt(String path, int def) {
-        config.addDefault( "world-settings.default." + path, def );
-        return config.getInt( "world-settings." + worldName + "." + path, config.getInt( "world-settings.default." + path ) );
-    }
-
-    private float getFloat(String path, float def) {
+    private static float getFloat(String path, float def) {
         // TODO: Figure out why getFloat() always returns the default value.
         return (float) getDouble( path, (double) def );
     }
 
-    private <T> List getList(String path, T def) {
-        config.addDefault( "world-settings.default." + path, def );
-        return (List<T>) config.getList( "world-settings." + worldName + "." + path, config.getList( "world-settings.default." + path ) );
+    private static <T> List getList(String path, T def) {
+        config.addDefault( "paper.world-settings." + path, def );
+        return (List<T>) config.getList( "paper.world-settings." + path, config.getList( "paper.world-settings." + path ) );
     }
 
-    private String getString(String path, String def) {
-        config.addDefault( "world-settings.default." + path, def );
-        return config.getString( "world-settings." + worldName + "." + path, config.getString( "world-settings.default." + path ) );
+    private static String getString(String path, String def) {
+        config.addDefault( "paper.world-settings." + path, def );
+        return config.getString( "paper.world-settings." + path, config.getString( "paper.world-settings." + path ) );
     }
 
-    public boolean allowUndeadHorseLeashing;
-    private void allowUndeadHorseLeashing() {
+    public static boolean allowUndeadHorseLeashing;
+    private static void allowUndeadHorseLeashing() {
         allowUndeadHorseLeashing = getBoolean( "allow-undead-horse-leashing", false );
     }
 
-    public double squidMinSpawnHeight;
-    public double squidMaxSpawnHeight;
-
-    private void squidSpawnHeight() {
+    public static double squidMinSpawnHeight;
+    public static double squidMaxSpawnHeight;
+    private static void squidSpawnHeight() {
         squidMinSpawnHeight = getDouble( "squid-spawn-height.minimum", 45.0D );
         squidMaxSpawnHeight = getDouble( "squid-spawn-height.maximum", 63.0D );
     }
 
-    public float playerBlockingDamageMultiplier;
-
-    private void playerBlockingDamageMultiplier() {
+    public static float playerBlockingDamageMultiplier;
+    private static void playerBlockingDamageMultiplier() {
         playerBlockingDamageMultiplier = getFloat( "player-blocking-damage-multiplier", 0.5F );
     }
 
-    public int cactusMaxHeight;
-    public int reedMaxHeight;
-
-    private void blockGrowthHeight() {
+    public static int cactusMaxHeight;
+    public static int reedMaxHeight;
+    private static void blockGrowthHeight() {
         cactusMaxHeight = getInt( "max-growth-height.cactus", 3 );
         reedMaxHeight = getInt( "max-growth-height.reeds", 3 );
     }
 
-    public int fishingMinTicks;
-    public int fishingMaxTicks;
-
-    private void fishingTickRange() {
+    public static int fishingMinTicks;
+    public static int fishingMaxTicks;
+    private static void fishingTickRange() {
         fishingMinTicks = getInt( "fishing-time-range.MinimumTicks", 100 );
         fishingMaxTicks = getInt( "fishing-time-range.MaximumTicks", 900 );
     }
 
-    public float blockBreakExhaustion;
-    public float playerSwimmingExhaustion;
-
-    private void exhaustionValues() {
+    public static float blockBreakExhaustion;
+    public static float playerSwimmingExhaustion;
+    private static void exhaustionValues() {
         blockBreakExhaustion = getFloat( "player-exhaustion.block-break", 0.025F );
         playerSwimmingExhaustion = getFloat( "player-exhaustion.swimming", 0.015F );
     }
 
-    public int softDespawnDistance;
-    public int hardDespawnDistance;
-
-    private void despawnDistances() {
+    public static int softDespawnDistance;
+    public static int hardDespawnDistance;
+    private static void despawnDistances() {
         softDespawnDistance = getInt("despawn-ranges.soft", 32);
         hardDespawnDistance = getInt("despawn-ranges.hard", 128);
 
@@ -115,104 +99,91 @@ public class PaperSpigotWorldConfig {
         hardDespawnDistance = hardDespawnDistance * hardDespawnDistance;
     }
 
-    public boolean keepSpawnInMemory;
-
-    private void keepSpawnInMemory() {
+    public static boolean keepSpawnInMemory;
+    private static void keepSpawnInMemory() {
         keepSpawnInMemory = getBoolean( "keep-spawn-loaded", true);
     }
 
-    public int fallingBlockHeightNerf;
-
-    private void fallingBlockheightNerf() {
+    public static int fallingBlockHeightNerf;
+    private static void fallingBlockheightNerf() {
         fallingBlockHeightNerf = getInt( "falling-block-height-nerf", 0);
     }
 
-    public int tntEntityHeightNerf;
-
-    private void tntEntityHeightNerf() {
+    public static int tntEntityHeightNerf;
+    private static void tntEntityHeightNerf() {
         tntEntityHeightNerf = getInt( "tnt-entity-height-nerf", 0);
     }
 
-    public int waterOverLavaFlowSpeed;
-
-    private void waterOverLavaFlowSpeed() {
+    public static int waterOverLavaFlowSpeed;
+    private static void waterOverLavaFlowSpeed() {
         waterOverLavaFlowSpeed = getInt( "water-over-lava-flow-speed", 5 );
     }
 
-    public boolean removeInvalidMobSpawnerTEs;
-
-    private void removeInvalidMobSpawnerTEs() {
+    public static boolean removeInvalidMobSpawnerTEs;
+    private static void removeInvalidMobSpawnerTEs() {
         removeInvalidMobSpawnerTEs = getBoolean( "remove-invalid-mob-spawner-tile-entities", true );
     }
 
-    public boolean removeUnloadedEnderPearls;
-    public boolean removeUnloadedTNTEntities;
-    public boolean removeUnloadedFallingBlocks;
-
-    private void removeUnloaded() {
+    public static boolean removeUnloadedEnderPearls;
+    public static boolean removeUnloadedTNTEntities;
+    public static boolean removeUnloadedFallingBlocks;
+    private static void removeUnloaded() {
         removeUnloadedEnderPearls = getBoolean( "remove-unloaded.enderpearls", true );
         removeUnloadedTNTEntities = getBoolean( "remove-unloaded.tnt-entities", true );
         removeUnloadedFallingBlocks = getBoolean( "remove-unloaded.falling-blocks", true );
     }
 
-    public boolean boatsDropBoats;
-    public boolean disablePlayerCrits;
-    public boolean disableChestCatDetection;
-
-    private void mechanicsChanges() {
+    public static boolean boatsDropBoats;
+    public static boolean disablePlayerCrits;
+    public static boolean disableChestCatDetection;
+    private static void mechanicsChanges() {
         boatsDropBoats = getBoolean( "game-mechanics.boats-drop-boats", false );
         disablePlayerCrits = getBoolean( "game-mechanics.disable-player-crits", false );
         disableChestCatDetection = getBoolean( "game-mechanics.disable-chest-cat-detection", false );
     }
 
-    public boolean netherVoidTopDamage;
-
-    private void nethervoidTopDamage() {
+    public static boolean netherVoidTopDamage;
+    private static void nethervoidTopDamage() {
         netherVoidTopDamage = getBoolean( "nether-ceiling-void-damage", false );
     }
 
-    public int tickNextTickCap;
-    public boolean tickNextTickListCapIgnoresRedstone;
-
-    private void tickNextTickCap() {
+    public static int tickNextTickCap;
+    public static boolean tickNextTickListCapIgnoresRedstone;
+    private static void tickNextTickCap() {
         tickNextTickCap = getInt( "tick-next-tick-list-cap", 10000 ); // Higher values will be friendlier to vanilla style mechanics (to a point) but may hurt performance
         tickNextTickListCapIgnoresRedstone = getBoolean( "tick-next-tick-list-cap-ignores-redstone", false ); // Redstone TickNextTicks will always bypass the preceding cap.
     }
 
-    public boolean useAsyncLighting;
-
-    private void useAsyncLighting() {
+    public static boolean useAsyncLighting;
+    private static void useAsyncLighting() {
         useAsyncLighting = getBoolean( "use-async-lighting", true );
     }
 
-    public boolean disableEndCredits;
-
-    private void disableEndCredits() {
+    public static boolean disableEndCredits;
+    private static void disableEndCredits() {
         disableEndCredits = getBoolean( "game-mechanics.disable-end-credits", false );
     }
 
-    public boolean loadUnloadedEnderPearls;
-    public boolean loadUnloadedTNTEntities;
-    public boolean loadUnloadedFallingBlocks;
-
-    private void loadUnloaded() {
+    public static boolean loadUnloadedEnderPearls;
+    public static boolean loadUnloadedTNTEntities;
+    public static boolean loadUnloadedFallingBlocks;
+    private static void loadUnloaded() {
         loadUnloadedEnderPearls = getBoolean( "load-chunks.enderpearls", false );
         loadUnloadedTNTEntities = getBoolean( "load-chunks.tnt-entities", false );
         loadUnloadedFallingBlocks = getBoolean( "load-chunks.falling-blocks", false );
     }
 
-    public boolean generateCanyon;
-    public boolean generateCaves;
-    public boolean generateDungeon;
-    public boolean generateFortress;
-    public boolean generateMineshaft;
-    public boolean generateMonument;
-    public boolean generateStronghold;
-    public boolean generateTemple;
-    public boolean generateVillage;
-    public boolean generateFlatBedrock;
-
-    private void generatorSettings() {
+    public static boolean generateCanyon;
+    public static boolean generateCaves;
+    public static boolean generateDungeon;
+    public static boolean generateFortress;
+    public static boolean generateMineshaft;
+    public static boolean generateMonument;
+    public static boolean generateStronghold;
+    public static boolean generateTemple;
+    public static boolean generateVillage;
+    public static boolean generateFlatBedrock;
+    private static void generatorSettings() {
         generateCanyon = getBoolean( "generator-settings.canyon", true );
         generateCaves = getBoolean( "generator-settings.caves", true );
         generateDungeon = getBoolean( "generator-settings.dungeon", true );
@@ -225,144 +196,97 @@ public class PaperSpigotWorldConfig {
         generateFlatBedrock = getBoolean( "generator-settings.flat-bedrock", false );
     }
 
-    public boolean fixCannons;
-
-    private void fixCannons() {
-        // TODO: Remove migrations after most users have upgraded.
-        if ( PaperSpigotConfig.version < 9 ) {
-            boolean value = config.getBoolean( "world-settings.default.fix-cannons", false );
-            if ( !value ) value = config.getBoolean( "world-settings.default.tnt-gameplay.fix-directional-bias", false );
-            if ( !value ) value = !config.getBoolean( "world-settings.default.tnt-gameplay.moves-in-water", true );
-            if ( !value ) value = config.getBoolean( "world-settings.default.tnt-gameplay.legacy-explosion-height", false );
-            if ( value ) config.set( "world-settings.default.fix-cannons", true );
-
-            if ( config.contains( "world-settings.default.tnt-gameplay" ) )
-            {
-                config.getDefaults().set( "world-settings.default.tnt-gameplay", null);
-                config.set( "world-settings.default.tnt-gameplay", null );
-            }
-
-            // Migrate world setting
-
-            value = config.getBoolean( "world-settings." + worldName + ".fix-cannons", false );
-            if ( !value ) value = config.getBoolean( "world-settings." + worldName + ".tnt-gameplay.fix-directional-bias", false );
-            if ( !value ) value = !config.getBoolean( "world-settings." + worldName + ".tnt-gameplay.moves-in-water", true );
-            if ( !value ) value = config.getBoolean( "world-settings." + worldName + ".tnt-gameplay.legacy-explosion-height", false );
-            if ( value ) config.set( "world-settings." + worldName + ".fix-cannons", true );
-
-            if ( config.contains( "world-settings." + worldName + ".tnt-gameplay" ) )
-            {
-                config.getDefaults().set( "world-settings." + worldName + ".tnt-gameplay", null);
-                config.set( "world-settings." + worldName + ".tnt-gameplay", null );
-            }
-        }
-
+    public static boolean fixCannons;
+    private static void fixCannons() {
         fixCannons = getBoolean( "fix-cannons", false );
     }
 
-    public boolean fallingBlocksCollideWithSigns;
-
-    private void fallingBlocksCollideWithSigns() {
+    public static boolean fallingBlocksCollideWithSigns;
+    private static void fallingBlocksCollideWithSigns() {
         fallingBlocksCollideWithSigns = getBoolean( "falling-blocks-collide-with-signs", false );
     }
 
-    public boolean optimizeExplosions;
-
-    private void optimizeExplosions() {
+    public static boolean optimizeExplosions;
+    private static void optimizeExplosions() {
         optimizeExplosions = getBoolean( "optimize-explosions", true );
     }
 
-    public boolean fastDrainLava;
-    public boolean fastDrainWater;
-
-    private void fastDraining() {
+    public static boolean fastDrainLava;
+    public static boolean fastDrainWater;
+    private static void fastDraining() {
         fastDrainLava = getBoolean( "fast-drain.lava", false );
         fastDrainWater = getBoolean( "fast-drain.water", false );
     }
 
-    public int lavaFlowSpeedNormal;
-    public int lavaFlowSpeedNether;
-
-    private void lavaFlowSpeed() {
+    public static int lavaFlowSpeedNormal;
+    public static int lavaFlowSpeedNether;
+    private static void lavaFlowSpeed() {
         lavaFlowSpeedNormal = getInt( "lava-flow-speed.normal", 30 );
         lavaFlowSpeedNether = getInt( "lava-flow-speed.nether", 10 );
     }
 
-    public boolean disableExplosionKnockback;
-
-    private void disableExplosionKnockback() {
+    public static boolean disableExplosionKnockback;
+    private static void disableExplosionKnockback() {
         disableExplosionKnockback = getBoolean( "disable-explosion-knockback", false );
     }
 
-    public boolean disableThunder;
-
-    private void disableThunder() {
+    public static boolean disableThunder;
+    private static void disableThunder() {
         disableThunder = getBoolean( "disable-thunder", true );
     }
 
-    public boolean disableIceAndSnow;
-
-    private void disableIceAndSnow() {
+    public static boolean disableIceAndSnow;
+    private static void disableIceAndSnow() {
         disableIceAndSnow = getBoolean( "disable-ice-and-snow", true );
     }
 
-    public boolean disableMoodSounds;
-
-    private void disableMoodSounds() {
+    public static boolean disableMoodSounds;
+    private static void disableMoodSounds() {
         disableMoodSounds = getBoolean( "disable-mood-sounds", false );
     }
 
-    public int mobSpawnerTickRate;
-
-    private void mobSpawnerTickRate() {
+    public static int mobSpawnerTickRate;
+    private static void mobSpawnerTickRate() {
         mobSpawnerTickRate = getInt( "mob-spawner-tick-rate", 1 );
     }
 
-    public boolean cacheChunkMaps;
-
-    private void cacheChunkMaps() {
+    public static boolean cacheChunkMaps;
+    private static void cacheChunkMaps() {
         cacheChunkMaps = getBoolean( "cache-chunk-maps", false );
     }
 
-    public int containerUpdateTickRate;
-
-    private void containerUpdateTickRate() {
+    public static int containerUpdateTickRate;
+    private static void containerUpdateTickRate() {
         containerUpdateTickRate = getInt( "container-update-tick-rate", 1 );
     }
 
-    public float tntExplosionVolume;
-
-    private void tntExplosionVolume() {
+    public static float tntExplosionVolume;
+    private static void tntExplosionVolume() {
         tntExplosionVolume = getFloat( "tnt-explosion-volume", 4.0F );
     }
 
-    public boolean useHopperCheck;
-
-    private void useHopperCheck() {
+    public static boolean useHopperCheck;
+    private static void useHopperCheck() {
         useHopperCheck = getBoolean( "use-hopper-check", false );
     }
 
-    public boolean allChunksAreSlimeChunks;
-
-    private void allChunksAreSlimeChunks() {
+    public static boolean allChunksAreSlimeChunks;
+    private static void allChunksAreSlimeChunks() {
         allChunksAreSlimeChunks = getBoolean( "all-chunks-are-slime-chunks", false );
     }
 
-    public boolean allowBlockLocationTabCompletion;
-
-    private void allowBlockLocationTabCompletion() {
+    public static boolean allowBlockLocationTabCompletion;
+    private static void allowBlockLocationTabCompletion() {
         allowBlockLocationTabCompletion = getBoolean( "allow-block-location-tab-completion", true );
     }
 
-    public int portalSearchRadius;
-
-    private void portalSearchRadius() {
+    public static int portalSearchRadius;
+    private static void portalSearchRadius() {
         portalSearchRadius = getInt("portal-search-radius", 128);
     }
 
-    public boolean disableTeleportationSuffocationCheck;
-
-    private void disableTeleportationSuffocationCheck() {
+    public static boolean disableTeleportationSuffocationCheck;
+    private static void disableTeleportationSuffocationCheck() {
         disableTeleportationSuffocationCheck = getBoolean("disable-teleportation-suffocation-check", false);
     }
 }

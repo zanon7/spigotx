@@ -1,7 +1,8 @@
 package net.minecraft.server;
 
 import com.minexd.spigot.SpigotX;
-import com.minexd.spigot.SpigotXConfig;
+import com.minexd.spigot.config.SharedConfig;
+import com.minexd.spigot.config.SpigotXConfig;
 
 import com.google.common.collect.Lists;
 
@@ -158,22 +159,14 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
         // Register player list (which starts CraftServer)
         this.a(new DedicatedPlayerList(this));
 
-        // Load Spigot settings
-        org.spigotmc.SpigotConfig.init((File) options.valueOf("spigot-settings"));
-        org.spigotmc.SpigotConfig.registerCommands();
-
-        // Load PaperSpigot settings
-        org.github.paperspigot.PaperSpigotConfig.init((File) options.valueOf("spigot-settings"));
-        org.github.paperspigot.PaperSpigotConfig.registerCommands();
-
         // Load SpigotX
         SpigotX.INSTANCE.setConfig(new SpigotXConfig());
         SpigotX.INSTANCE.registerCommands();
+        SharedConfig.registerCommands();
 
         DedicatedServer.LOGGER.info("* Allocated memory: " + (Runtime.getRuntime().maxMemory() / 1024L / 1024L));
         DedicatedServer.LOGGER.info("* Online Mode: " + this.getOnlineMode());
         DedicatedServer.LOGGER.info("* Server Address: " + this.getServerIp() + ":" + this.getPort());
-        DedicatedServer.LOGGER.info("* View Distance: " + this.getPlayerList().getCserver().getViewDistance());
 
         this.a(MinecraftEncryption.b());
 
@@ -255,13 +248,6 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
                 this.n = new RemoteControlListener(this);
                 this.n.a();
                 this.remoteConsole = new org.bukkit.craftbukkit.command.CraftRemoteConsoleCommandSender();
-            }
-
-            if (this.server.getBukkitSpawnRadius() > -1) {
-                this.propertyManager.properties.remove("spawn-protection");
-                this.propertyManager.getInt("spawn-protection", this.server.getBukkitSpawnRadius());
-                this.server.removeBukkitSpawnRadius();
-                this.propertyManager.savePropertiesFile();
             }
 
             if (org.spigotmc.SpigotConfig.lateBind) {

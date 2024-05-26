@@ -1,5 +1,6 @@
 package com.minexd.spigot;
 
+import com.minexd.spigot.config.SpigotXConfig;
 import com.minexd.spigot.handler.MovementHandler;
 import com.minexd.spigot.command.KnockbackCommand;
 import com.minexd.spigot.handler.PacketHandler;
