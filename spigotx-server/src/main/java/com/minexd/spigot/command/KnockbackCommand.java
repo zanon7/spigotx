@@ -27,14 +27,10 @@ public class KnockbackCommand extends Command {
                 ChatColor.YELLOW + "/kb create <name>" + ChatColor.GRAY + " - " + ChatColor.GREEN + "Create new profile",
                 ChatColor.YELLOW + "/kb delete <name>" + ChatColor.GRAY + " - " + ChatColor.GREEN + "Delete a profile",
                 ChatColor.YELLOW + "/kb load <name>" + ChatColor.GRAY + " - " + ChatColor.GREEN + "Load existing profile",
-                ChatColor.YELLOW + "/kb friction <name> <double>" + ChatColor.GRAY + " - " + ChatColor.GREEN + "Set friction",
-                ChatColor.YELLOW + "/kb horizontal <name> <double>" + ChatColor.GRAY + " - " + ChatColor.GREEN + "Set horizontal",
-                ChatColor.YELLOW + "/kb vertical <name> <double>" + ChatColor.GRAY + " - " + ChatColor.GREEN + "Set vertical",
-                ChatColor.YELLOW + "/kb extrahorizontal <name> <double>" + ChatColor.GRAY + " - " + ChatColor.GREEN + "Set extra horizontal",
-                ChatColor.YELLOW + "/kb extravertical <name> <double>" + ChatColor.GRAY + " - " + ChatColor.GREEN + "Set extra vertical",
-                ChatColor.YELLOW + "/kb limit <name> <double>" + ChatColor.GRAY + " - " + ChatColor.GREEN + "Set vertical limit"
+                ChatColor.YELLOW + "/kb edit <name> <module> <value>" + ChatColor.GRAY + " - " + ChatColor.GREEN + "Edit existing profile",
         }, "\n"));
     }
+
 
     @Override
     public boolean execute(CommandSender sender, String alias, String[] args) {
@@ -128,144 +124,117 @@ public class KnockbackCommand extends Command {
                     return true;
                 }
             }
-            case "friction": {
-                if (args.length == 3 && NumberUtils.isNumber(args[2])) {
+            break;
+            case "edit": {
+                if (args.length > 1) {
                     KnockbackProfile profile = SpigotX.INSTANCE.getConfig().getKbProfileByName(args[1]);
 
                     if (profile == null) {
-                        sender.sendMessage(ChatColor.RED + "A profile with that name could not be found.");
-                        return true;
+                        sender.sendMessage("§cThis profile doesn't exist.");
+                        return false;
                     }
+                    switch (args[2]) {
+                        case "friction": {
+                            if (!NumberUtils.isNumber(args[3])) {
+                                sender.sendMessage("§4" + args[3] + " §c is not a number.");
+                                return false;
+                            }
+                            double value = Double.parseDouble(args[3]);
+                            profile.setFriction(value);
+                            profile.save();
+                            sender.sendMessage(ChatColor.GOLD + "You have updated " + ChatColor.GREEN + profile.getName() + ChatColor.GOLD + "'s values to:");
+                            for (String values : profile.getValues()) {
+                                sender.sendMessage(ChatColor.GRAY + "* " + values);
+                            }
+                            break;
+                        }
+                        case "horizontal": {
+                            if (!NumberUtils.isNumber(args[3])) {
+                                sender.sendMessage("§4" + args[3] + " §c is not a number.");
+                                return false;
+                            }
+                            double value = Double.parseDouble(args[3]);
+                            profile.setHorizontal(value);
+                            profile.save();
 
-                    profile.setFriction(Double.parseDouble(args[2]));
-                    profile.save();
+                            sender.sendMessage(ChatColor.GOLD + "You have updated " + ChatColor.GREEN + profile.getName() + ChatColor.GOLD + "'s values to:");
+                            for (String values : profile.getValues()) {
+                                sender.sendMessage(ChatColor.GRAY + "* " + values);
+                            }
+                            break;
+                        }
+                        case "vertical": {
+                            if (!NumberUtils.isNumber(args[3])) {
+                                sender.sendMessage("§4" + args[3] + " §c is not a number.");
+                                return false;
+                            }
+                            double value = Double.parseDouble(args[3]);
+                            profile.setVertical(value);
+                            profile.save();
 
-                    sender.sendMessage(ChatColor.GOLD + "You have updated " + ChatColor.GREEN + profile.getName() + ChatColor.GOLD + "'s values to:");
+                            sender.sendMessage(ChatColor.GOLD + "You have updated " + ChatColor.GREEN + profile.getName() + ChatColor.GOLD + "'s values to:");
+                            for (String values : profile.getValues()) {
+                                sender.sendMessage(ChatColor.GRAY + "* " + values);
+                            }
+                            break;
+                        }
+                        case "extrahorizontal": {
+                            if (!NumberUtils.isNumber(args[3])) {
+                                sender.sendMessage("§4" + args[3] + " §c is not a number.");
+                                return false;
+                            }
 
-                    for (String value : profile.getValues()) {
-                        sender.sendMessage(ChatColor.GRAY + "* " + value);
+                            double value = Double.parseDouble(args[3]);
+                            profile.setExtraHorizontal(value);
+                            profile.save();
+
+                            sender.sendMessage(ChatColor.GOLD + "You have updated " + ChatColor.GREEN + profile.getName() + ChatColor.GOLD + "'s values to:");
+                            for (String values : profile.getValues()) {
+                                sender.sendMessage(ChatColor.GRAY + "* " + values);
+                            }
+                            break;
+                        }
+                        case "extravertical": {
+                            if (!NumberUtils.isNumber(args[3])) {
+                                sender.sendMessage("§4" + args[3] + " §c is not a number.");
+                                return false;
+                            }
+
+                            double value = Double.parseDouble(args[3]);
+                            profile.setExtraVertical(value);
+                            profile.save();
+
+                            sender.sendMessage(ChatColor.GOLD + "You have updated " + ChatColor.GREEN + profile.getName() + ChatColor.GOLD + "'s values to:");
+                            for (String values : profile.getValues()) {
+                                sender.sendMessage(ChatColor.GRAY + "* " + values);
+                            }
+                            break;
+                        }
+                        case "ver-limit": {
+                            if (!NumberUtils.isNumber(args[3])) {
+                                sender.sendMessage("§4" + args[3] + " §c is not a number.");
+                                return false;
+                            }
+
+                            double value = Double.parseDouble(args[3]);
+                            profile.setVerticalLimit(value);
+                            profile.save();
+
+                            sender.sendMessage(ChatColor.GOLD + "You have updated " + ChatColor.GREEN + profile.getName() + ChatColor.GOLD + "'s values to:");
+                            for (String values : profile.getValues()) {
+                                sender.sendMessage(ChatColor.GRAY + "* " + values);
+                            }
+                            break;
+                        }
+                        default: {
+                            sender.sendMessage(usageMessage);
+                        }
                     }
-                } else {
-                    sender.sendMessage(ChatColor.RED + "Wrong syntax.");
                 }
-            }
-            break;
-            case "horizontal": {
-                if (args.length == 3 && NumberUtils.isNumber(args[2])) {
-                    KnockbackProfile profile = SpigotX.INSTANCE.getConfig().getKbProfileByName(args[1]);
-
-                    if (profile == null) {
-                        sender.sendMessage(ChatColor.RED + "A profile with that name could not be found.");
-                        return true;
-                    }
-
-                    profile.setHorizontal(Double.parseDouble(args[2]));
-                    profile.save();
-
-                    sender.sendMessage(ChatColor.GOLD + "You have updated " + ChatColor.GREEN + profile.getName() + ChatColor.GOLD + "'s values to:");
-
-                    for (String value : profile.getValues()) {
-                        sender.sendMessage(ChatColor.GRAY + "* " + value);
-                    }
-                } else {
-                    sender.sendMessage(ChatColor.RED + "Wrong syntax.");
-                }
-            }
-            break;
-            case "vertical": {
-                if (args.length == 3 && NumberUtils.isNumber(args[2])) {
-                    KnockbackProfile profile = SpigotX.INSTANCE.getConfig().getKbProfileByName(args[1]);
-
-                    if (profile == null) {
-                        sender.sendMessage(ChatColor.RED + "A profile with that name could not be found.");
-                        return true;
-                    }
-
-                    profile.setVertical(Double.parseDouble(args[2]));
-                    profile.save();
-
-                    sender.sendMessage(ChatColor.GOLD + "You have updated " + ChatColor.GREEN + profile.getName() + ChatColor.GOLD + "'s values to:");
-
-                    for (String value : profile.getValues()) {
-                        sender.sendMessage(ChatColor.GRAY + "* " + value);
-                    }
-                } else {
-                    sender.sendMessage(ChatColor.RED + "Wrong syntax.");
-                }
-            }
-            break;
-            case "extrahorizontal": {
-                if (args.length == 3 && NumberUtils.isNumber(args[2])) {
-                    KnockbackProfile profile = SpigotX.INSTANCE.getConfig().getKbProfileByName(args[1]);
-
-                    if (profile == null) {
-                        sender.sendMessage(ChatColor.RED + "A profile with that name could not be found.");
-                        return true;
-                    }
-
-                    profile.setExtraHorizontal(Double.parseDouble(args[2]));
-                    profile.save();
-
-                    sender.sendMessage(ChatColor.GOLD + "You have updated " + ChatColor.GREEN + profile.getName() + ChatColor.GOLD + "'s values to:");
-
-                    for (String value : profile.getValues()) {
-                        sender.sendMessage(ChatColor.GRAY + "* " + value);
-                    }
-                } else {
-                    sender.sendMessage(ChatColor.RED + "Wrong syntax.");
-                }
-            }
-            break;
-            case "extravertical": {
-                if (args.length == 3 && NumberUtils.isNumber(args[2])) {
-                    KnockbackProfile profile = SpigotX.INSTANCE.getConfig().getKbProfileByName(args[1]);
-
-                    if (profile == null) {
-                        sender.sendMessage(ChatColor.RED + "A profile with that name could not be found.");
-                        return true;
-                    }
-
-                    profile.setExtraVertical(Double.parseDouble(args[2]));
-                    profile.save();
-
-                    sender.sendMessage(ChatColor.GOLD + "You have updated " + ChatColor.GREEN + profile.getName() + ChatColor.GOLD + "'s values to:");
-
-                    for (String value : profile.getValues()) {
-                        sender.sendMessage(ChatColor.GRAY + "* " + value);
-                    }
-                } else {
-                    sender.sendMessage(ChatColor.RED + "Wrong syntax.");
-                }
-            }
-            break;
-            case "limit": {
-                if (args.length == 3 && NumberUtils.isNumber(args[2])) {
-                    KnockbackProfile profile = SpigotX.INSTANCE.getConfig().getKbProfileByName(args[1]);
-
-                    if (profile == null) {
-                        sender.sendMessage(ChatColor.RED + "A profile with that name could not be found.");
-                        return true;
-                    }
-
-                    profile.setVerticalLimit(Double.parseDouble(args[2]));
-                    profile.save();
-
-                    sender.sendMessage(ChatColor.GOLD + "You have updated " + ChatColor.GREEN + profile.getName() + ChatColor.GOLD + "'s values to:");
-
-                    for (String value : profile.getValues()) {
-                        sender.sendMessage(ChatColor.GRAY + "* " + value);
-                    }
-                } else {
-                    sender.sendMessage(ChatColor.RED + "Wrong syntax.");
-                }
-            }
-            break;
-            default: {
-                sender.sendMessage(usageMessage);
             }
         }
 
         return true;
     }
-
 }
+
