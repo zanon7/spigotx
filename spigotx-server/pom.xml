@@ -197,7 +197,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
+                <version>3.2.4</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -234,24 +234,6 @@
                                     <shadedPattern>net.minecraft.server.v${minecraft_version}</shadedPattern>
                                 </relocation>
                             </relocations>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Gotta go after shade plugin -->
-            <plugin>
-                <groupId>net.md-5</groupId>
-                <artifactId>specialsource-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>remap</goal>
-                        </goals>
-                        <configuration>
-                            <srgIn>${project.basedir}/deprecation-mappings.csrg</srgIn>
-                            <accessIn>${project.basedir}/deprecation-mappings.at</accessIn>
                         </configuration>
                     </execution>
                 </executions>
