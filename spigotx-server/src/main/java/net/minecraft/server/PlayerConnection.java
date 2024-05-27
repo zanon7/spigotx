@@ -68,6 +68,23 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 	private int forwardSwingTick;
 	private boolean processedDisconnect;
 
+	// don't throw exceptions to post to main thread
+    private <T extends PacketListener> boolean ensureMainThread(final Packet<T> packet) throws CancelledPacketHandleException {
+		IAsyncTaskHandler taskHandler = this.player.u();
+
+		if (taskHandler.isMainThread()) {
+			return false;
+		}
+
+		taskHandler.postToMainThread(() -> {
+			if (!processedDisconnect) {
+				packet.a((T) this);
+			}
+		});
+
+		return true;
+		    }
+
 	public PlayerConnection(MinecraftServer minecraftserver, NetworkManager networkmanager, EntityPlayer entityplayer) {
 		this.minecraftServer = minecraftserver;
 		this.networkManager = networkmanager;
@@ -168,7 +185,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 	}
 
 	public void a(PacketPlayInSteerVehicle packetplayinsteervehicle) {
-		PlayerConnectionUtils.ensureMainThread(packetplayinsteervehicle, this, this.player.u());
+		if (ensureMainThread(packetplayinsteervehicle)) return;
 		this.player.a(packetplayinsteervehicle.a(), packetplayinsteervehicle.b(), packetplayinsteervehicle.c(), packetplayinsteervehicle.d());
 	}
 
@@ -177,7 +194,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 	}
 
 	public void a(PacketPlayInFlying packetplayinflying) {
-		PlayerConnectionUtils.ensureMainThread(packetplayinflying, this, this.player.u());
+		if (ensureMainThread(packetplayinflying)) return;
 
 		if (this.b(packetplayinflying)) {
 			this.disconnect("Invalid move packet received");
@@ -554,7 +571,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 	}
 
 	public void a(PacketPlayInBlockDig packetplayinblockdig) {
-		PlayerConnectionUtils.ensureMainThread(packetplayinblockdig, this, this.player.u());
+		if (ensureMainThread(packetplayinblockdig)) return;
 		if (this.player.dead) return;
 		WorldServer worldserver = this.minecraftServer.getWorldServer(this.player.dimension);
 		BlockPosition blockposition = packetplayinblockdig.a();
@@ -647,7 +664,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 	private int packets = 0;
 
 	public void a(PacketPlayInBlockPlace packetplayinblockplace) {
-		PlayerConnectionUtils.ensureMainThread(packetplayinblockplace, this, this.player.u());
+		if (ensureMainThread(packetplayinblockplace)) return;
 		WorldServer worldserver = this.minecraftServer.getWorldServer(this.player.dimension);
 		boolean throttled = false;
 
@@ -763,7 +780,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 	}
 
 	public void a(PacketPlayInSpectate packetplayinspectate) {
-		PlayerConnectionUtils.ensureMainThread(packetplayinspectate, this, this.player.u());
+		if (ensureMainThread(packetplayinspectate)) return;
 
 		if (this.player.isSpectator()) {
 			Entity entity = null;
@@ -787,6 +804,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 	}
 
 	public void a(PacketPlayInResourcePackStatus packetplayinresourcepackstatus) {
+		if (ensureMainThread(packetplayinresourcepackstatus)) return;
 		this.server.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(getPlayer(), PlayerResourcePackStatusEvent.Status.values()[packetplayinresourcepackstatus.b.ordinal()]));
 	}
 
@@ -865,7 +883,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 			return;
 		}
 
-		PlayerConnectionUtils.ensureMainThread(packetplayinhelditemslot, this, this.player.u());
+		if (ensureMainThread(packetplayinhelditemslot)) return;
 
 		if (packetplayinhelditemslot.a() >= 0 && packetplayinhelditemslot.a() < PlayerInventory.getHotbarSize()) {
 			PlayerItemHeldEvent event = new PlayerItemHeldEvent(this.getPlayer(), this.player.inventory.itemInHandIndex, packetplayinhelditemslot.a());
@@ -889,7 +907,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 		boolean isSync = packetplayinchat.a().startsWith("/");
 
 		if (packetplayinchat.a().startsWith("/")) {
-			PlayerConnectionUtils.ensureMainThread(packetplayinchat, this, this.player.u());
+			if (ensureMainThread(packetplayinchat)) return;
 		}
 
 		if (this.player.dead || this.player.getChatFlags() == EntityHuman.EnumChatVisibility.HIDDEN) {
@@ -1130,9 +1148,8 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 	}
 
 	public void a(PacketPlayInArmAnimation packetplayinarmanimation) {
-		if (this.player.dead) {
-			return;
-		}
+		if (this.player.dead) return;
+		if (ensureMainThread(packetplayinarmanimation)) return;
 
 		if (SpigotX.INSTANCE.getConfig().isInvalidArmAnimationKick()) {
 			if (lastSwingTick != MinecraftServer.currentTick) {
@@ -1154,7 +1171,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 			}
 		}
 
-		PlayerConnectionUtils.ensureMainThread(packetplayinarmanimation, this, this.player.u());
+		if (ensureMainThread(packetplayinarmanimation)) return;
 
 		this.player.resetIdleTimer();
 
@@ -1200,7 +1217,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 	}
 
 	public void a(PacketPlayInEntityAction packetplayinentityaction) {
-		PlayerConnectionUtils.ensureMainThread(packetplayinentityaction, this, this.player.u());
+		if (ensureMainThread(packetplayinentityaction)) return;
 
 		if (this.player.dead) {
 			return;
@@ -1273,7 +1290,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 			return;
 		}
 
-		PlayerConnectionUtils.ensureMainThread(packetplayinuseentity, this, this.player.u());
+		if (ensureMainThread(packetplayinuseentity)) return;
 
 		WorldServer worldserver = this.minecraftServer.getWorldServer(this.player.dimension);
 		Entity entity = packetplayinuseentity.a(worldserver);
@@ -1348,7 +1365,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 	}
 
 	public void a(PacketPlayInClientCommand packetplayinclientcommand) {
-		PlayerConnectionUtils.ensureMainThread(packetplayinclientcommand, this, this.player.u());
+		if (ensureMainThread(packetplayinclientcommand)) return;
 
 		this.player.resetIdleTimer();
 
@@ -1392,7 +1409,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 			return;
 		}
 
-		PlayerConnectionUtils.ensureMainThread(packetplayinclosewindow, this, this.player.u());
+		if (ensureMainThread(packetplayinclosewindow)) return;
 
 		CraftEventFactory.handleInventoryCloseEvent(this.player);
 
@@ -1404,7 +1421,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 			return;
 		}
 
-		PlayerConnectionUtils.ensureMainThread(packetplayinwindowclick, this, this.player.u());
+		if (ensureMainThread(packetplayinwindowclick)) return;
 
 		this.player.resetIdleTimer();
 
@@ -1704,7 +1721,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 	}
 
 	public void a(PacketPlayInEnchantItem packetplayinenchantitem) {
-		PlayerConnectionUtils.ensureMainThread(packetplayinenchantitem, this, this.player.u());
+		if (ensureMainThread(packetplayinenchantitem)) return;
 
 		this.player.resetIdleTimer();
 
@@ -1716,7 +1733,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 	}
 
 	public void a(PacketPlayInSetCreativeSlot packetplayinsetcreativeslot) {
-		PlayerConnectionUtils.ensureMainThread(packetplayinsetcreativeslot, this, this.player.u());
+		if (ensureMainThread(packetplayinsetcreativeslot)) return;
 
 		if (this.player.playerInteractManager.isCreative()) {
 			boolean flag = packetplayinsetcreativeslot.a() < 0;
@@ -1807,7 +1824,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 			return;
 		}
 
-		PlayerConnectionUtils.ensureMainThread(packetplayintransaction, this, this.player.u());
+		if (ensureMainThread(packetplayintransaction)) return;
 
 		Short s = this.n.get(this.player.activeContainer.windowId);
 
@@ -1885,7 +1902,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 	}
 
 	public void a(PacketPlayInAbilities packetplayinabilities) {
-		PlayerConnectionUtils.ensureMainThread(packetplayinabilities, this, this.player.u());
+		if (ensureMainThread(packetplayinabilities)) return;
 
 		if (this.player.abilities.canFly && this.player.abilities.isFlying != packetplayinabilities.isFlying()) {
 			PlayerToggleFlightEvent event = new PlayerToggleFlightEvent(this.server.getPlayer(this.player), packetplayinabilities.isFlying());
@@ -1901,7 +1918,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 	}
 
 	public void a(PacketPlayInTabComplete packetplayintabcomplete) {
-		PlayerConnectionUtils.ensureMainThread(packetplayintabcomplete, this, this.player.u());
+		if (ensureMainThread(packetplayintabcomplete)) return;
 
 		if (chatSpamField.addAndGet(this, 10) > 500 && !this.minecraftServer.getPlayerList().isOp(this.player.getProfile())) {
 			this.disconnect("disconnect.spam");
@@ -1921,12 +1938,12 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 	}
 
 	public void a(PacketPlayInSettings packetplayinsettings) {
-		PlayerConnectionUtils.ensureMainThread(packetplayinsettings, this, this.player.u());
+		if (ensureMainThread(packetplayinsettings)) return;
 		this.player.a(packetplayinsettings);
 	}
 
 	public void a(PacketPlayInCustomPayload packetplayincustompayload) {
-		PlayerConnectionUtils.ensureMainThread(packetplayincustompayload, this, this.player.u());
+		if (ensureMainThread(packetplayincustompayload)) return;
 		PacketDataSerializer packetdataserializer;
 		ItemStack itemstack;
 		ItemStack itemstack1;
