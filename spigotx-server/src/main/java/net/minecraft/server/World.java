@@ -6,6 +6,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.minexd.spigot.util.PlayerMap;
 import org.bukkit.Bukkit;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.CraftServer;
@@ -240,6 +241,7 @@ public abstract class World implements IBlockAccess {
         return this;
     }
 
+    public final PlayerMap playerMap = new PlayerMap(); // MineHQ
     public BiomeBase getBiome(final BlockPosition blockposition) {
         if (this.isLoaded(blockposition)) {
             Chunk chunk = this.getChunkAtWorldCoords(blockposition);
@@ -1059,6 +1061,7 @@ public abstract class World implements IBlockAccess {
                 EntityHuman entityhuman = (EntityHuman) entity;
 
                 this.players.add(entityhuman);
+                this.playerMap.add((EntityPlayer) entityhuman); // MineHQ
                 this.everyoneSleeping();
             }
 
@@ -1097,6 +1100,7 @@ public abstract class World implements IBlockAccess {
         entity.die();
         if (entity instanceof EntityHuman) {
             this.players.remove(entity);
+            this.playerMap.remove((EntityPlayer) entity); // MineHQ
             // Spigot start
             for ( Object o : worldMaps.c )
             {
@@ -1125,6 +1129,7 @@ public abstract class World implements IBlockAccess {
         entity.die();
         if (entity instanceof EntityHuman) {
             this.players.remove(entity);
+            this.playerMap.remove((EntityPlayer) entity); // MineHQ
             this.everyoneSleeping();
         }
 
@@ -1214,7 +1219,7 @@ public abstract class World implements IBlockAccess {
                             {
                                 block = chunk.getBlockData( blockposition );
                             }
-                            if ( block != null )
+                            if ( block != null && block != Blocks.AIR) // MineHQ
                             {
                                 // PaperSpigot start - FallingBlocks and TNT collide with specific non-collidable blocks
                                 Block b = block.getBlock();
@@ -1300,7 +1305,7 @@ public abstract class World implements IBlockAccess {
                             iblockdata = Blocks.BEDROCK.getBlockData();
                         }
 
-                        iblockdata.getBlock().a(this, blockposition_mutableblockposition, iblockdata, axisalignedbb, arraylist, (Entity) null);
+                        if (iblockdata != Blocks.AIR.getBlockData()) iblockdata.getBlock().a(this, blockposition_mutableblockposition, iblockdata, axisalignedbb, arraylist, null);
                     }
                 }
             }
@@ -2868,6 +2873,11 @@ public abstract class World implements IBlockAccess {
     }
 
     public EntityHuman findNearbyPlayer(double d0, double d1, double d2, double d3) {
+        // MineHQ start
+        if (0 <= d3 && d3 <= 64) {
+            return this.playerMap.getNearestPlayer(d0, d1, d2, d3);
+        }
+        // MineHQ end
         double d4 = -1.0D;
         EntityHuman entityhuman = null;
 
@@ -2914,6 +2924,11 @@ public abstract class World implements IBlockAccess {
     }
 
     public EntityHuman findNearbyPlayerWhoAffectsSpawning(double d0, double d1, double d2, double d3) {
+        // MineHQ start
+        if (0 <= d3 && d3 <= 64.0) {
+            return this.playerMap.getNearbyPlayer(d0, d1, d2, d3, true);
+        }
+        // MineHQ end
         double d4 = -1.0D;
         EntityHuman entityhuman = null;
 

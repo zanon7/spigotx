@@ -1,15 +1,15 @@
 package org.bukkit.craftbukkit.inventory;
 
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.PacketPlayOutHeldItemSlot;
-import net.minecraft.server.PacketPlayOutSetSlot;
-import net.minecraft.server.PlayerInventory;
+import net.minecraft.server.*;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
 
 public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.inventory.PlayerInventory, EntityEquipment {
     public CraftInventoryPlayer(net.minecraft.server.PlayerInventory inventory) {
@@ -213,4 +213,39 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
     public void setBootsDropChance(float chance) {
         throw new UnsupportedOperationException();
     }
+    // MineHQ start
+    @Override
+    public HashMap<Integer, ItemStack> addItem(ItemStack... items) {
+        HashMap<Integer, ItemStack> leftover = super.addItem(items);
+        this.updatePlayerInventory();
+        return leftover;
+    }
+
+    @Override
+    public void remove(Material material) {
+        super.remove(material);
+        this.updatePlayerInventory();
+    }
+
+    @Override
+    public HashMap<Integer, ItemStack> removeItem(ItemStack... items) {
+        HashMap<Integer, ItemStack> leftover = super.removeItem(items);
+        this.updatePlayerInventory();
+        return leftover;
+    }
+
+    @Override
+    public void remove(ItemStack item) {
+        super.remove(item);
+        this.updatePlayerInventory();
+    }
+
+    private void updatePlayerInventory() {
+        EntityHuman human = this.getInventory().player;
+        if (human instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) human;
+            player.updateInventory(player.defaultContainer);
+        }
+    }
+    // MineHQ end
 }

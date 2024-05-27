@@ -378,7 +378,7 @@ public class PlayerInteractManager {
                     }
                 }
 
-                if (itemstack1.count == 0) {
+                if (itemstack1.count <= 0) {
                     entityhuman.inventory.items[entityhuman.inventory.itemInHandIndex] = null;
                 }
 

@@ -367,7 +367,7 @@ public class CraftScheduler implements BukkitScheduler {
                 }
                 parsePending();
             } else {
-                debugTail = debugTail.setNext(new CraftAsyncDebugger(currentTick + RECENT_TICKS, task.getOwner(), task.getTaskClass()));
+                // debugTail = debugTail.setNext(new CraftAsyncDebugger(currentTick + RECENT_TICKS, task.getOwner(), task.getTaskClass()));
                 executor.execute(new ServerSchedulerReportingWrapper(task)); // Paper
                 // We don't need to parse pending
                 // (async tasks must live with race-conditions if they attempt to cancel between these few lines of code)
@@ -382,7 +382,7 @@ public class CraftScheduler implements BukkitScheduler {
         }
         pending.addAll(temp);
         temp.clear();
-        debugHead = debugHead.getNextHead(currentTick);
+        // debugHead = debugHead.getNextHead(currentTick);
     }
 
     private void addTask(final CraftTask task) {
@@ -439,10 +439,15 @@ public class CraftScheduler implements BukkitScheduler {
 
     @Override
     public String toString() {
+        // MineHQ start
+        return "";
+        /*
         int debugTick = currentTick;
         StringBuilder string = new StringBuilder("Recent tasks from ").append(debugTick - RECENT_TICKS).append('-').append(debugTick).append('{');
         debugHead.debugTo(string);
         return string.append('}').toString();
+        */
+        // MineHQ end
     }
 
     @Deprecated

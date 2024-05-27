@@ -138,7 +138,7 @@ public class EntityTrackerEntry {
                     }
                     // CraftBukkit end
 
-                    if (j1 >= -128 && j1 < 128 && k1 >= -128 && k1 < 128 && l1 >= -128 && l1 < 128 && this.v <= 400 && !this.x && this.y == this.tracker.onGround) {
+                    if (j1 >= -128 && j1 < 128 && k1 >= -128 && k1 < 128 && l1 >= -128 && l1 < 128 && this.v <= 100 && !this.x && this.y == this.tracker.onGround) { // Kohi - greatly reduce forced teleport interval - 400 -> 100
                         if (((!flag || !flag1) && !(this.tracker instanceof EntityArrow))) {
                             if (flag) {
                                 object = new PacketPlayOutEntity.PacketPlayOutRelEntityMove(this.tracker.getId(), (byte) j1, (byte) k1, (byte) l1, this.tracker.onGround);
@@ -265,7 +265,11 @@ public class EntityTrackerEntry {
             }
             */
             // CraftBukkit end
-            this.broadcastIncludingSelf(new PacketPlayOutEntityVelocity(this.tracker));
+            if (this.tracker instanceof EntityPlayer) {
+                ((EntityPlayer) this.tracker).playerConnection.sendPacket(new PacketPlayOutEntityVelocity(this.tracker));
+            } else if (this.tracker instanceof EntityArrow || this.tracker instanceof EntityProjectile) {
+                this.broadcast(new PacketPlayOutEntityVelocity(this.tracker));
+            }
             this.tracker.velocityChanged = false;
         }
 
@@ -300,15 +304,21 @@ public class EntityTrackerEntry {
 
         if (this.tracker instanceof EntityLiving) {
             AttributeMapServer attributemapserver = (AttributeMapServer) ((EntityLiving) this.tracker).getAttributeMap();
-            Set set = attributemapserver.getAttributes();
+            Set<AttributeInstance> set = attributemapserver.getAttributes();
 
             if (!set.isEmpty()) {
                 // CraftBukkit start - Send scaled max health
                 if (this.tracker instanceof EntityPlayer) {
                     ((EntityPlayer) this.tracker).getBukkitEntity().injectScaledMaxHealth(set, false);
+                    ((EntityPlayer) this.tracker).playerConnection.sendPacket(new PacketPlayOutUpdateAttributes(this.tracker.getId(), set)); // MineHQ
                 }
                 // CraftBukkit end
-                this.broadcastIncludingSelf(new PacketPlayOutUpdateAttributes(this.tracker.getId(), set));
+                // MineHQ start
+                // this.broadcastIncludingSelf(new PacketPlayOutUpdateAttributes(this.tracker.getId(), set)); // CraftBukkit
+                if (this.tracker.passenger instanceof EntityPlayer) {
+                    ((EntityPlayer) this.tracker.passenger).playerConnection.sendPacket(new PacketPlayOutUpdateAttributes(this.tracker.getId(), set));
+                }
+                // MineHQ end
             }
 
             set.clear();
@@ -379,6 +389,8 @@ public class EntityTrackerEntry {
                         entityplayer.playerConnection.sendPacket(new PacketPlayOutUpdateEntityNBT(this.tracker.getId(), nbttagcompound));
                     }
 
+                    // MineHQ start
+                    /*
                     if (this.tracker instanceof EntityLiving) {
                         AttributeMapServer attributemapserver = (AttributeMapServer) ((EntityLiving) this.tracker).getAttributeMap();
                         Collection collection = attributemapserver.c();
@@ -393,6 +405,9 @@ public class EntityTrackerEntry {
                             entityplayer.playerConnection.sendPacket(new PacketPlayOutUpdateAttributes(this.tracker.getId(), collection));
                         }
                     }
+
+                    */
+                    // MineHQ end
 
                     this.j = this.tracker.motX;
                     this.k = this.tracker.motY;

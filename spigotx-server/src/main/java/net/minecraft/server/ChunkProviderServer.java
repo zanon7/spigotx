@@ -53,7 +53,14 @@ public class ChunkProviderServer implements IChunkProvider {
         // CraftBukkit end
     }
 
-    public void queueUnload(int i, int j) {
+    // MineHQ start
+    public void queueUnload(int x, int z) {
+        queueUnload(x, z, false);
+    }
+
+    public void queueUnload(int i, int j, boolean checked) {
+        if (!checked && this.world.getPlayerChunkMap().isChunkInUse(i, j)) return;
+        // MineHQ end
         // PaperSpigot start - Asynchronous lighting updates
         if (SpigotX.INSTANCE.getConfig().isDoChunkUnload()) {
             return;

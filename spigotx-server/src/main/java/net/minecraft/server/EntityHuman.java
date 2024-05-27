@@ -353,6 +353,7 @@ public abstract class EntityHuman extends EntityLiving {
             double d0 = this.locX;
             double d1 = this.locY;
             double d2 = this.locZ;
+            World world = this.world;
             float f = this.yaw;
             float f1 = this.pitch;
 
@@ -566,7 +567,7 @@ public abstract class EntityHuman extends EntityLiving {
     public EntityItem a(ItemStack itemstack, boolean flag, boolean flag1) {
         if (itemstack == null) {
             return null;
-        } else if (itemstack.count == 0) {
+        } else if (itemstack.count <= 0) {
             return null;
         } else {
             double d0 = this.locY - 0.30000001192092896D + (double) this.getHeadHeight();
@@ -1386,7 +1387,10 @@ public abstract class EntityHuman extends EntityLiving {
             super.g(f, f1);
         }
 
-        this.checkMovement(this.locX - d0, this.locY - d1, this.locZ - d2);
+        // Kohi - don't check if world changed
+        if (this.world == world) {
+            this.checkMovement(this.locX - d0, this.locY - d1, this.locZ - d2);
+        }
     }
 
     public float bI() {

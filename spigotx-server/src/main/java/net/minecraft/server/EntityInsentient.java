@@ -428,6 +428,13 @@ public abstract class EntityInsentient extends EntityLiving {
         return true;
     }
 
+    // Kohi start - check for despawn on inactive ticks
+    public void inactiveTick() {
+        super.inactiveTick();
+        this.w();
+    }
+    // Kohi end
+
     protected void D() {
         if (this.persistent) {
             this.ticksFarFromPlayer = 0;
@@ -444,7 +451,9 @@ public abstract class EntityInsentient extends EntityLiving {
                     this.die();
                 }
 
-                if (this.ticksFarFromPlayer > 600 && this.random.nextInt(800) == 0 && d3 > this.world.paperSpigotConfig.softDespawnDistance) { // CraftBukkit - remove isTypeNotPersistent() check // PaperSpigot - custom despawn distance
+                // Kohi - decrease random check to account for decreased interval
+                // MineHQ - decrease random check even more for performance
+                if (this.ticksFarFromPlayer > 600  && this.random.nextInt(10) == 0 && d3 > this.world.paperSpigotConfig.softDespawnDistance) {
                     this.die();
                 } else if (d3 < this.world.paperSpigotConfig.softDespawnDistance) { // PaperSpigot - custom despawn distances
                     this.ticksFarFromPlayer = 0;

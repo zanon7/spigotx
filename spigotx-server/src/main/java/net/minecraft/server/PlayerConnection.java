@@ -766,7 +766,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
 
 		itemstack = this.player.inventory.getItemInHand();
 
-		if (itemstack != null && itemstack.count == 0) {
+		if (itemstack != null && itemstack.count <= 0) {
 			this.player.inventory.items[this.player.inventory.itemInHandIndex] = null;
 
 			itemstack = null;

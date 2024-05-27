@@ -641,7 +641,7 @@ public class EntityHorse extends EntityAnimal implements IInventoryListener {
                 }
 
                 if (flag) {
-                    if (!entityhuman.abilities.canInstantlyBuild && --itemstack.count == 0) {
+                    if (!entityhuman.abilities.canInstantlyBuild && --itemstack.count <= 0) {
                         entityhuman.inventory.setItem(entityhuman.inventory.itemInHandIndex, (ItemStack) null);
                     }
 

@@ -78,6 +78,11 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
         return this.collidesWithEntities && super.ae();
     }
 
+    // MineHQ start
+    public int playerMapX;
+    public int playerMapZ;
+    // MineHQ end
+
     public EntityPlayer(MinecraftServer minecraftserver, WorldServer worldserver, GameProfile gameprofile, PlayerInteractManager playerinteractmanager) {
         super(worldserver, gameprofile);
         this.viewDistance = world.spigotConfig.viewDistance; // PaperSpigot - Player view distance API
@@ -611,6 +616,15 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
         if (this.vehicle != entity1) { // CraftBukkit
             this.playerConnection.sendPacket(new PacketPlayOutAttachEntity(0, this, this.vehicle));
             this.playerConnection.a(this.locX, this.locY, this.locZ, this.yaw, this.pitch);
+            // MineHQ start
+            if (this.vehicle instanceof EntityLiving) {
+                AttributeMapServer attributemapserver = (AttributeMapServer) ((EntityLiving) this.vehicle).getAttributeMap();
+                Collection collection = attributemapserver.c();
+                if (!collection.isEmpty()) {
+                    this.playerConnection.sendPacket(new PacketPlayOutUpdateAttributes(this.vehicle.getId(), collection));
+                }
+            }
+            // MineHQ end
         }
 
     }

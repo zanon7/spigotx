@@ -49,7 +49,7 @@ public class EntityZombie extends EntityMonster {
 
     protected void initAttributes() {
         super.initAttributes();
-        this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(35.0D);
+        this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(16.0D);  // Kohi - change follow range from 35.0 to 16.0 for performance
         this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.23000000417232513D);
         this.getAttributeInstance(GenericAttributes.ATTACK_DAMAGE).setValue(3.0D);
         this.getAttributeMap().b(EntityZombie.a).setValue(this.random.nextDouble() * 0.10000000149011612D);

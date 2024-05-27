@@ -188,18 +188,18 @@ public class CraftWorld implements World {
 
     public boolean unloadChunkRequest(int x, int z, boolean safe) {
         org.spigotmc.AsyncCatcher.catchOp( "chunk unload"); // Spigot
-        if (safe && isChunkInUse(x, z)) {
+        if (isChunkInUse(x, z)) { // MineHQ - never unload in-use chunks
             return false;
         }
 
-        world.chunkProviderServer.queueUnload(x, z);
+        world.chunkProviderServer.queueUnload(x, z, true); // MineHQ
 
         return true;
     }
 
     public boolean unloadChunk(int x, int z, boolean save, boolean safe) {
         org.spigotmc.AsyncCatcher.catchOp( "chunk unload"); // Spigot
-        if (safe && isChunkInUse(x, z)) {
+        if (isChunkInUse(x, z)) { // MineHQ - never unload in-use chunks
             return false;
         }
 

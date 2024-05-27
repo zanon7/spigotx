@@ -101,14 +101,16 @@ public class ActivationRange
             int k = MathHelper.floor( maxBB.c / 16.0D );
             int l = MathHelper.floor( maxBB.f / 16.0D );
 
+            Chunk chunk = null; // MineHQ
             for ( int i1 = i; i1 <= j; ++i1 )
             {
                 for ( int j1 = k; j1 <= l; ++j1 )
                 {
-                    if ( world.getWorld().isChunkLoaded( i1, j1 ) )
-                    {
-                        activateChunkEntities( world.getChunkAt( i1, j1 ) );
+                    // MineHQ start
+                    if ((chunk = world.getChunkIfLoaded(i1, j1)) != null) {
+                        activateChunkEntities(chunk);
                     }
+                    // MineHQ end
                 }
             }
         }

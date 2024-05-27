@@ -10,6 +10,7 @@ public class DispenseBehaviorItem implements IDispenseBehavior {
     public DispenseBehaviorItem() {}
 
     public final ItemStack a(ISourceBlock isourceblock, ItemStack itemstack) {
+        if (itemstack != null && itemstack.count < 0) itemstack.count = 0;
         ItemStack itemstack1 = this.b(isourceblock, itemstack);
 
         this.a(isourceblock);

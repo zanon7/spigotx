@@ -21,8 +21,8 @@ public class PlayerChunkMap {
     private final WorldServer world;
     private final List<EntityPlayer> managedPlayers = Lists.newArrayList();
     private final LongHashMap<PlayerChunkMap.PlayerChunk> d = new LongHashMap();
-    private final Queue<PlayerChunkMap.PlayerChunk> e = new java.util.concurrent.ConcurrentLinkedQueue<PlayerChunkMap.PlayerChunk>(); // CraftBukkit ArrayList -> ConcurrentLinkedQueue
-    private final Queue<PlayerChunkMap.PlayerChunk> f = new java.util.concurrent.ConcurrentLinkedQueue<PlayerChunkMap.PlayerChunk>(); // CraftBukkit ArrayList -> ConcurrentLinkedQueue
+    private final List<PlayerChunk> e = new ArrayList<>(); // Kohi - use arraylist as in vanilla
+    // private final Queue f = new java.util.concurrent.ConcurrentLinkedQueue(); // Kohi - this is pointless
     private int g;
     private long h;
     private final int[][] i = new int[][] { { 1, 0}, { 0, 1}, { -1, 0}, { 0, -1}};
@@ -40,8 +40,8 @@ public class PlayerChunkMap {
     public void flush() {
         long i = this.world.getTime();
         int j;
-        PlayerChunkMap.PlayerChunk playerchunkmap_playerchunk;
 
+        /* Kohi - removed PlayerChunkMap.f
         if (i - this.h > 8000L) {
             this.h = i;
 
@@ -60,9 +60,16 @@ public class PlayerChunkMap {
                 iterator.remove();
                 // CraftBukkit end
             }
-        }
+        }*/
 
         // this.e.clear(); //CraftBukkit - Removals are already covered
+        for (PlayerChunk playerchunk : this.e) {
+            playerchunk.b();
+        }
+
+        this.e.clear();
+        // MineHQ start - chunk GC handles this
+        /*
         if (this.managedPlayers.isEmpty()) {
             if (!wasNotEmpty) return; // CraftBukkit - Only do unload when we go from non-empty to empty
             WorldProvider worldprovider = this.world.worldProvider;
@@ -76,6 +83,8 @@ public class PlayerChunkMap {
             wasNotEmpty = true;
         }
         // CraftBukkit end
+        */
+        // MineHQ end
 
     }
 
@@ -92,7 +101,7 @@ public class PlayerChunkMap {
         if (playerchunkmap_playerchunk == null && flag) {
             playerchunkmap_playerchunk = new PlayerChunkMap.PlayerChunk(i, j);
             this.d.put(k, playerchunkmap_playerchunk);
-            this.f.add(playerchunkmap_playerchunk);
+            // this.f.add(playerchunkmap_playerchunk);
         }
 
         return playerchunkmap_playerchunk;
@@ -109,6 +118,7 @@ public class PlayerChunkMap {
     // CraftBukkit end
 
     public void flagDirty(BlockPosition blockposition) {
+        org.spigotmc.AsyncCatcher.catchOp("PlayerChunkMap.flagDirty");
         int i = blockposition.getX() >> 4;
         int j = blockposition.getZ() >> 4;
         PlayerChunkMap.PlayerChunk playerchunkmap_playerchunk = this.a(i, j, false);
@@ -120,8 +130,10 @@ public class PlayerChunkMap {
     }
 
     public void addPlayer(EntityPlayer entityplayer) {
-        int i = (int) entityplayer.locX >> 4;
-        int j = (int) entityplayer.locZ >> 4;
+        // Poweruser start
+        int i = MathHelper.floor(entityplayer.locX) >> 4;
+        int j = MathHelper.floor(entityplayer.locZ) >> 4;
+        // Poweruser end
 
         entityplayer.d = entityplayer.locX;
         entityplayer.e = entityplayer.locZ;
@@ -151,8 +163,10 @@ public class PlayerChunkMap {
         ArrayList arraylist = Lists.newArrayList(entityplayer.chunkCoordIntPairQueue);
         int i = 0;
         int j = entityplayer.viewDistance; // PaperSpigot - Player view distance API
-        int k = (int) entityplayer.locX >> 4;
-        int l = (int) entityplayer.locZ >> 4;
+        // Poweruser start
+        int k = MathHelper.floor(entityplayer.locX) >> 4;
+        int l = MathHelper.floor(entityplayer.locZ) >> 4;
+        // Poweruser end
         int i1 = 0;
         int j1 = 0;
         ChunkCoordIntPair chunkcoordintpair = this.a(k, l, true).location;
@@ -193,8 +207,10 @@ public class PlayerChunkMap {
     }
 
     public void removePlayer(EntityPlayer entityplayer) {
-        int i = (int) entityplayer.d >> 4;
-        int j = (int) entityplayer.e >> 4;
+        // Poweruser start
+        int i = MathHelper.floor(entityplayer.d) >> 4;
+        int j = MathHelper.floor(entityplayer.e) >> 4;
+        // Poweruser end
 
         // PaperSpigot start - Player view distance API
         for (int k = i - entityplayer.viewDistance; k <= i + entityplayer.viewDistance; ++k) {
@@ -219,15 +235,19 @@ public class PlayerChunkMap {
     }
 
     public void movePlayer(EntityPlayer entityplayer) {
-        int i = (int) entityplayer.locX >> 4;
-        int j = (int) entityplayer.locZ >> 4;
+        // Poweruser start
+        int i = MathHelper.floor(entityplayer.locX) >> 4;
+        int j = MathHelper.floor(entityplayer.locZ) >> 4;
+        // Poweruser end
         double d0 = entityplayer.d - entityplayer.locX;
         double d1 = entityplayer.e - entityplayer.locZ;
         double d2 = d0 * d0 + d1 * d1;
 
         if (d2 >= 64.0D) {
-            int k = (int) entityplayer.d >> 4;
-            int l = (int) entityplayer.e >> 4;
+            // Poweruser start
+            int k = MathHelper.floor(entityplayer.d) >> 4;
+            int l = MathHelper.floor(entityplayer.e) >> 4;
+            // Poweruser end
             int i1 = entityplayer.viewDistance; // PaperSpigot - Player view distance API
             int j1 = i - k;
             int k1 = j - l;
@@ -278,13 +298,15 @@ public class PlayerChunkMap {
         i = MathHelper.clamp(i, 3, 32);
         if (i != this.g) {
             int j = i - this.g;
-            ArrayList arraylist = Lists.newArrayList(this.managedPlayers);
+            List<EntityPlayer> arraylist = Lists.newArrayList(this.managedPlayers);
             Iterator iterator = arraylist.iterator();
 
             while (iterator.hasNext()) {
                 EntityPlayer entityplayer = (EntityPlayer) iterator.next();
-                int k = (int) entityplayer.locX >> 4;
-                int l = (int) entityplayer.locZ >> 4;
+                // Poweruser start
+                int k = MathHelper.floor(entityplayer.locX) >> 4;
+                int l = MathHelper.floor(entityplayer.locZ) >> 4;
+                // Poweruser end
                 int i1;
                 int j1;
 
@@ -317,8 +339,8 @@ public class PlayerChunkMap {
     public void updateViewDistance(EntityPlayer player, int viewDistance) {
         viewDistance = MathHelper.clamp(viewDistance, 3, 32);
         if (viewDistance != player.viewDistance) {
-            int cx = (int) player.locX >> 4;
-            int cz = (int) player.locZ >> 4;
+            int cx = MathHelper.floor(player.locX) >> 4;
+            int cz = MathHelper.floor(player.locZ) >> 4;
 
             if (viewDistance - player.viewDistance > 0) {
                 for (int x = cx - viewDistance; x <= cx + viewDistance; ++x) {
@@ -413,7 +435,7 @@ public class PlayerChunkMap {
                         ChunkIOExecutor.dropQueuedChunkLoad(PlayerChunkMap.this.a(), this.location.x, this.location.z, this.loadedRunnable);
                         long i = (long) this.location.x + 2147483647L | (long) this.location.z + 2147483647L << 32;
                         PlayerChunkMap.this.d.remove(i);
-                        PlayerChunkMap.this.f.remove(this);
+                        // PlayerChunkMap.this.f.remove(this);
                     }
 
                     return;
@@ -433,7 +455,7 @@ public class PlayerChunkMap {
 
                     this.a(chunk);
                     PlayerChunkMap.this.d.remove(i);
-                    PlayerChunkMap.this.f.remove(this);
+                    // PlayerChunkMap.this.f.remove(this);
                     if (this.dirtyCount > 0) {
                         PlayerChunkMap.this.e.remove(this);
                     }
@@ -557,8 +579,10 @@ public class PlayerChunkMap {
         private int z;
 
         public ChunkCoordComparator (EntityPlayer entityplayer) {
-            x = (int) entityplayer.locX >> 4;
-            z = (int) entityplayer.locZ >> 4;
+            // Poweruser start
+            x = MathHelper.floor(entityplayer.locX) >> 4;
+            z = MathHelper.floor(entityplayer.locZ) >> 4;
+            // Poweruser end
         }
 
         public int compare(ChunkCoordIntPair a, ChunkCoordIntPair b) {

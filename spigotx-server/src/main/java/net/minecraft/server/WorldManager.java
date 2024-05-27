@@ -30,9 +30,9 @@ public class WorldManager implements IWorldAccess {
 
     public void a(EntityHuman entityhuman, String s, double d0, double d1, double d2, float f, float f1) {
         if (s.equals("random.drink") || s.contains("step") || s.contains("player") || s.equals("random.eat")) {
-            this.a.getPlayerList().sendPacketNearby(entityhuman, d0, d1, d2, f > 1.0F ? (double) (16.0F * f) : 16.0D, this.world.dimension, new PacketPlayOutNamedSoundEffect(s, d0, d1, d2, f, f1));
+            this.world.playerMap.sendPacketNearby((EntityPlayer) entityhuman, d0, d1, d2, f > 1.0F ? (double) (16.0F * f) : 16.0D, new PacketPlayOutNamedSoundEffect(s, d0, d1, d2, f, f1));
         } else {
-            this.a.getPlayerList().sendPacketNearbyIncludingSelf(entityhuman, d0, d1, d2, f > 1.0F ? (double) (16.0F * f) : 16.0D, this.world.dimension, new PacketPlayOutNamedSoundEffect(s, d0, d1, d2, f, f1));
+            this.world.playerMap.sendPacketNearby((EntityPlayer) entityhuman, d0, d1, d2, f > 1.0F ? (double) (16.0F * f) : 16.0D, new PacketPlayOutNamedSoundEffect(s, d0, d1, d2, f, f1));
         }
     }
 

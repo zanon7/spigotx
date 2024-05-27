@@ -70,7 +70,7 @@ public class LoginListener implements PacketLoginInListener, IUpdatePlayerListBo
 
     public void disconnect(String s) {
         try {
-            LoginListener.c.info("Disconnecting " + this.d() + ": " + s);
+            LoginListener.c.info("Disconnecting " + this.i.getName() + ": " + s);
             ChatComponentText chatcomponenttext = new ChatComponentText(s);
 
             this.networkManager.handle(new PacketLoginOutDisconnect(chatcomponenttext));
@@ -148,7 +148,7 @@ public class LoginListener implements PacketLoginInListener, IUpdatePlayerListBo
     }
 
     public void a(IChatBaseComponent ichatbasecomponent) {
-        LoginListener.c.info(this.d() + " lost connection: " + ichatbasecomponent.c());
+        LoginListener.c.info((this.i != null ? this.i.getName() : this.networkManager.getSocketAddress()) + " lost connection: " + ichatbasecomponent.c());
     }
 
     public String d() {
@@ -273,7 +273,6 @@ public class LoginListener implements PacketLoginInListener, IUpdatePlayerListBo
                                 }
                             }
                             // CraftBukkit end
-                            LoginListener.c.info("UUID of player " + LoginListener.this.i.getName() + " is " + LoginListener.this.i.getId());
                             LoginListener.this.g = LoginListener.EnumProtocolState.READY_TO_ACCEPT;
         }
     }

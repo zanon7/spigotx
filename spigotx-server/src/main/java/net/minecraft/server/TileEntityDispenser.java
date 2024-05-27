@@ -100,6 +100,7 @@ public class TileEntityDispenser extends TileEntityContainer implements IInvento
 
     public void setItem(int i, ItemStack itemstack) {
         this.items[i] = itemstack;
+        if (itemstack != null && itemstack.count < 0) itemstack.count = 0;
         if (itemstack != null && itemstack.count > this.getMaxStackSize()) {
             itemstack.count = this.getMaxStackSize();
         }

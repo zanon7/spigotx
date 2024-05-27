@@ -52,6 +52,7 @@ public class Slot {
     }
 
     public void set(ItemStack itemstack) {
+        if (itemstack != null && itemstack.count < 0) itemstack.count = 0;
         this.inventory.setItem(this.index, itemstack);
         this.f();
     }

@@ -640,6 +640,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 		if (entity.passenger != null) {
 			return false;
 		}
+		// MineHQ start - don't allow excessive teleports
+		int locationChunkX = location.getBlockX() >> 4;
+		int locationChunkZ = location.getBlockZ() >> 4;
+
+		if (46340 <= Math.abs(locationChunkX) || 46340 <= Math.abs(locationChunkZ)) {
+			throw new IllegalArgumentException("Invalid teleportation destination for " + this.getName() + "! Offending location: " + location.toString());
+		}
+		// MineHQ end
 
 		// From = Players current Location
 		Location from = this.getLocation();

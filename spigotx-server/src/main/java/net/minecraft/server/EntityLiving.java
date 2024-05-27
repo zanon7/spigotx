@@ -1735,6 +1735,7 @@ public abstract class EntityLiving extends Entity {
                     break;
                 } // Spigot
                 Entity entity = (Entity) list.get(i);
+                if (entity instanceof EntityPlayer) continue; // MineHQ - players don't get pushed
 
                 // TODO better check now?
                 // CraftBukkit start - Only handle mob (non-player) collisions every other tick
