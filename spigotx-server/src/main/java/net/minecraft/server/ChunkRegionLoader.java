@@ -10,8 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChunkRegionLoader implements IChunkLoader, IAsyncChunkSaver {
 
     private static final Logger a = LogManager.getLogger();
-    private Map<ChunkCoordIntPair, NBTTagCompound> b = new ConcurrentHashMap();
-    private Set<ChunkCoordIntPair> c = Collections.newSetFromMap(new ConcurrentHashMap());
+    // Make public
+    public Map<ChunkCoordIntPair, NBTTagCompound> b = new ConcurrentHashMap();
+    public Set<ChunkCoordIntPair> c = Collections.newSetFromMap(new ConcurrentHashMap());
     private final File d;
     private boolean e = false;
 

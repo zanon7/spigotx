@@ -26,7 +26,7 @@ public class ChunkProviderServer implements IChunkProvider {
     public LongHashSet unloadQueue = new LongHashSet(); // CraftBukkit - LongHashSet
     public Chunk emptyChunk;
     public IChunkProvider chunkProvider;
-    private IChunkLoader chunkLoader;
+    public IChunkLoader chunkLoader; // private -> public
     public boolean forceChunkLoad = false; // CraftBukkit - true -> false
     public LongObjectHashMap<Chunk> chunks = new LongObjectHashMap<Chunk>();
     public WorldServer world;

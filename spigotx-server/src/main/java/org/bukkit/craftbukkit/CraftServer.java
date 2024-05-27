@@ -812,6 +812,19 @@ public final class CraftServer implements Server {
             } catch (ExceptionWorldConflict ex) {
                 getLogger().log(Level.SEVERE, null, ex);
             }
+        } else {
+            ChunkProviderServer cps = handle.chunkProviderServer;
+            ChunkRegionLoader loader = (ChunkRegionLoader) cps.chunkLoader;
+            loader.b.clear();
+            loader.c.clear();
+            try {
+                FileIOThread.a().b();
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+            cps.chunkLoader = null;
+            cps.chunkProvider = null;
+            cps.chunks.clear();
         }
 
         worlds.remove(world.getName().toLowerCase());

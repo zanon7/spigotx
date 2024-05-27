@@ -4,6 +4,7 @@ import com.google.common.collect.Queues;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.minexd.spigot.SpigotX;
 import com.minexd.spigot.handler.PacketHandler;
+import com.minexd.spigot.util.CachedSizeConcurrentLinkedQueue;
 import io.netty.channel.*;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.local.LocalChannel;
@@ -53,7 +54,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
     };
 
     private final EnumProtocolDirection h;
-    private final Queue<NetworkManager.QueuedPacket> packetQueue = Queues.newConcurrentLinkedQueue();
+    private final Queue<NetworkManager.QueuedPacket> packetQueue = new CachedSizeConcurrentLinkedQueue<>();
     private final ReentrantReadWriteLock j = new ReentrantReadWriteLock();
     public Channel channel;
     // Spigot Start // PAIL
@@ -272,6 +273,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
     }
 
     public void close(IChatBaseComponent ichatbasecomponent) {
+        this.packetQueue.clear();
         this.preparing = false;
 
         if (this.channel.isOpen()) {

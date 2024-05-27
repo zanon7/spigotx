@@ -175,7 +175,7 @@ public class CraftEventFactory {
         if (action != Action.LEFT_CLICK_AIR && action != Action.RIGHT_CLICK_AIR) {
             throw new IllegalArgumentException(String.format("%s performing %s with %s", who, action, itemstack)); // Spigot
         }
-        return callPlayerInteractEvent(who, action, new BlockPosition(0, 256, 0), EnumDirection.SOUTH, itemstack);
+        return callPlayerInteractEvent(who, action, /*new BlockPosition(0, 256, 0) */ null, EnumDirection.SOUTH, itemstack);
     }
 
     public static PlayerInteractEvent callPlayerInteractEvent(EntityHuman who, Action action, BlockPosition position, EnumDirection direction, ItemStack itemstack) {
@@ -190,11 +190,11 @@ public class CraftEventFactory {
         CraftWorld craftWorld = (CraftWorld) player.getWorld();
         CraftServer craftServer = (CraftServer) player.getServer();
 
-        Block blockClicked = craftWorld.getBlockAt(position.getX(), position.getY(), position.getZ());
-        BlockFace blockFace = CraftBlock.notchToBlockFace(direction);
-
-        if (position.getY() > 255) {
-            blockClicked = null;
+        // Block blockClicked = craftWorld.getBlockAt(position.getX(), position.getY(), position.getZ());
+        Block blockClicked = null;
+        if (position != null) {
+            blockClicked = craftWorld.getBlockAt(position.getX(), position.getY(), position.getZ());
+        } else {
             switch (action) {
             case LEFT_CLICK_BLOCK:
                 action = Action.LEFT_CLICK_AIR;
@@ -204,6 +204,7 @@ public class CraftEventFactory {
                 break;
             }
         }
+        BlockFace blockFace = CraftBlock.notchToBlockFace(direction); // moved down
 
         if (itemInHand.getType() == Material.AIR || itemInHand.getAmount() == 0) {
             itemInHand = null;
