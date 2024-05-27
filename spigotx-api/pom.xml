@@ -60,6 +60,12 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.36</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- bundled with Minecraft, should be kept in sync -->
         <dependency>
             <groupId>com.google.guava</groupId>
