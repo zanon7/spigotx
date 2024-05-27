@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
 import net.minecraft.server.*;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.entity.CraftPlayer;

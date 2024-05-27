@@ -1,17 +1,8 @@
 package net.minecraft.server;
 
 import com.minexd.spigot.SpigotX;
-
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-// CraftBukkit start
-import java.util.Random;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.chunkio.ChunkIOExecutor;
@@ -22,6 +13,11 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.PreChunkLoadEvent;
 import org.github.paperspigot.event.ServerExceptionEvent;
 import org.github.paperspigot.exception.ServerInternalException;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 // CraftBukkit end
 
 public class ChunkProviderServer implements IChunkProvider {

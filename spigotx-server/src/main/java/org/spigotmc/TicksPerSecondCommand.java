@@ -1,8 +1,6 @@
 package org.spigotmc;
 
 import com.minexd.spigot.util.DateUtil;
-import java.lang.management.ManagementFactory;
-
 import net.minecraft.server.DedicatedServer;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
@@ -10,6 +8,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+
+import java.lang.management.ManagementFactory;
 
 public class TicksPerSecondCommand extends Command {
 

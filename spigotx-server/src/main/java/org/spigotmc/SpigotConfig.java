@@ -1,11 +1,7 @@
 package org.spigotmc;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import co.aikar.timings.Timings;
+import co.aikar.timings.TimingsManager;
 import com.minexd.spigot.config.SharedConfig;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import net.minecraft.server.AttributeRanged;
@@ -17,8 +13,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import co.aikar.timings.Timings;
-import co.aikar.timings.TimingsManager;
+
+import java.util.*;
 
 public class SpigotConfig {
 

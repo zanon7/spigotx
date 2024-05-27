@@ -1,15 +1,16 @@
 package net.minecraft.server;
 
-import com.minexd.spigot.util.OptimizedRemoveUtil;
 import co.aikar.timings.SpigotTimings;
 import co.aikar.timings.Timing;
 import com.google.common.collect.Maps;
-import java.util.Map;
-import java.util.concurrent.Callable;
+import com.minexd.spigot.util.OptimizedRemoveUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.inventory.InventoryHolder;
 import org.github.paperspigot.exception.ServerInternalException;
+
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 public abstract class TileEntity implements OptimizedRemoveUtil.Marker {
 

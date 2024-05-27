@@ -1,5 +1,10 @@
 package net.minecraft.server;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.minexd.spigot.SpigotX;
 import com.minexd.spigot.event.potion.PotionEffectAddEvent;
 import com.minexd.spigot.event.potion.PotionEffectExpireEvent;
@@ -7,23 +12,8 @@ import com.minexd.spigot.event.potion.PotionEffectExtendEvent;
 import com.minexd.spigot.event.potion.PotionEffectRemoveEvent;
 import com.minexd.spigot.knockback.KnockbackProfile;
 import com.minexd.spigot.util.CraftPotionUtil;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Maps;
-
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
-
-// CraftBukkit start
-import java.util.ArrayList;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import net.jafama.FastMath;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Vehicle;
@@ -31,11 +21,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
-// CraftBukkit end
-
-// PaperSpigot start
-import org.bukkit.Bukkit;
 import org.spigotmc.event.entity.EntityDismountEvent;
+
+import java.util.*;
 // PaperSpigot end
 
 public abstract class EntityLiving extends Entity {

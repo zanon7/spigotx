@@ -1,14 +1,14 @@
 package org.github.paperspigot;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.*;
-
 import com.minexd.spigot.config.SharedConfig;
 import net.minecraft.server.Items;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 public class PaperSpigotConfig
 {

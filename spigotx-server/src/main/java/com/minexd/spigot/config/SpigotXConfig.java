@@ -1,23 +1,23 @@
 package com.minexd.spigot.config;
 
 import com.google.common.base.Throwables;
+import com.minexd.spigot.SpigotXBridge;
+import com.minexd.spigot.knockback.CraftKnockbackProfile;
+import com.minexd.spigot.knockback.KnockbackProfile;
+import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
-
-import com.minexd.spigot.SpigotXBridge;
-import lombok.Getter;
-import lombok.Setter;
-
-import com.minexd.spigot.knockback.CraftKnockbackProfile;
-import com.minexd.spigot.knockback.KnockbackProfile;
-
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 @Getter
 @Setter

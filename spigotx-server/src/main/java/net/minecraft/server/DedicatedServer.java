@@ -1,13 +1,20 @@
 package net.minecraft.server;
 
+import com.google.common.collect.Lists;
 import com.minexd.spigot.SpigotX;
 import com.minexd.spigot.config.SharedConfig;
 import com.minexd.spigot.config.SpigotXConfig;
-
-import com.google.common.collect.Lists;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bukkit.craftbukkit.LoggerOutputStream;
+import org.bukkit.craftbukkit.util.Waitable;
+import org.bukkit.event.server.RemoteServerCommandEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Proxy;
 import java.util.Collections;
@@ -15,17 +22,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.io.PrintStream;
-
-import org.apache.logging.log4j.Level;
-import org.bukkit.craftbukkit.LoggerOutputStream;
-import org.bukkit.event.server.ServerCommandEvent;
-import org.bukkit.craftbukkit.util.Waitable;
-import org.bukkit.event.server.RemoteServerCommandEvent;
 
 public class DedicatedServer extends MinecraftServer implements IMinecraftServer {
 

@@ -1,11 +1,10 @@
 package org.spigotmc;
 
+import co.aikar.timings.SpigotTimings;
 import com.minexd.spigot.SpigotX;
+import net.minecraft.server.*;
 
 import java.util.List;
-
-import net.minecraft.server.*;
-import co.aikar.timings.SpigotTimings;
 
 
 public class ActivationRange

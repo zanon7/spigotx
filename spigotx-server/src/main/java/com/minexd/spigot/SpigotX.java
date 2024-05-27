@@ -1,18 +1,16 @@
 package com.minexd.spigot;
 
+import com.minexd.spigot.command.KnockbackCommand;
 import com.minexd.spigot.config.SpigotXConfig;
 import com.minexd.spigot.handler.MovementHandler;
-import com.minexd.spigot.command.KnockbackCommand;
 import com.minexd.spigot.handler.PacketHandler;
+import net.minecraft.server.MinecraftServer;
+import org.bukkit.command.Command;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import net.minecraft.server.MinecraftServer;
-
-import org.bukkit.command.Command;
 
 public enum SpigotX {
 

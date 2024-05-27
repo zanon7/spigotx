@@ -1,7 +1,7 @@
 package net.minecraft.server;
 
 // CraftBukkit start
-import net.jafama.FastMath;
+
 import org.bukkit.event.entity.SlimeSplitEvent;
 // CraftBukkit end
 
