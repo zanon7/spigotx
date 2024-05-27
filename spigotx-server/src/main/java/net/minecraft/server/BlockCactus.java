@@ -92,7 +92,7 @@ public class BlockCactus extends Block {
     }
 
     public IBlockData fromLegacyData(int i) {
-        return this.getBlockData().set(BlockCactus.AGE, Integer.valueOf(i));
+        return this.getBlockData().set(BlockCactus.AGE, Integer.valueOf(i & 15)); // correct bad block data
     }
 
     public int toLegacyData(IBlockData iblockdata) {

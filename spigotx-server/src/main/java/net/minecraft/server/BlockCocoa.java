@@ -137,7 +137,7 @@ public class BlockCocoa extends BlockDirectional implements IBlockFragilePlantEl
     }
 
     public IBlockData fromLegacyData(int i) {
-        return this.getBlockData().set(BlockCocoa.FACING, EnumDirection.fromType2(i)).set(BlockCocoa.AGE, Integer.valueOf((i & 15) >> 2));
+        return this.getBlockData().set(BlockCocoa.FACING, EnumDirection.fromType2(i)).set(BlockCocoa.AGE, Integer.valueOf(MathHelper.clamp(i & 15, 0, 11) >> 2)); // correct bad block data
     }
 
     public int toLegacyData(IBlockData iblockdata) {

@@ -63,7 +63,7 @@ public class BlockNetherWart extends BlockPlant {
     }
 
     public IBlockData fromLegacyData(int i) {
-        return this.getBlockData().set(BlockNetherWart.AGE, Integer.valueOf(i));
+        return this.getBlockData().set(BlockNetherWart.AGE, Integer.valueOf(i & 3)); // correct bad block data
     }
 
     public int toLegacyData(IBlockData iblockdata) {

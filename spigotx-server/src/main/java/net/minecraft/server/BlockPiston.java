@@ -237,7 +237,7 @@ public class BlockPiston extends Block {
     public static EnumDirection b(int i) {
         int j = i & 7;
 
-        return j > 5 ? null : EnumDirection.fromType1(j);
+        return j > 5 ? EnumDirection.NORTH : EnumDirection.fromType1(j); // correct bad block data
     }
 
     public static EnumDirection a(World world, BlockPosition blockposition, EntityLiving entityliving) {

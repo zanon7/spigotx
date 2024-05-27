@@ -145,7 +145,7 @@ public class BlockStem extends BlockPlant implements IBlockFragilePlantElement {
     }
 
     public IBlockData fromLegacyData(int i) {
-        return this.getBlockData().set(BlockStem.AGE, Integer.valueOf(i));
+        return this.getBlockData().set(BlockStem.AGE, Integer.valueOf(i & 7)); // correct bad block data
     }
 
     public int toLegacyData(IBlockData iblockdata) {

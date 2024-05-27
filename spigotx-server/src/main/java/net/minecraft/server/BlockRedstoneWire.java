@@ -361,7 +361,7 @@ public class BlockRedstoneWire extends Block {
     }
 
     public IBlockData fromLegacyData(int i) {
-        return this.getBlockData().set(BlockRedstoneWire.POWER, Integer.valueOf(i));
+        return this.getBlockData().set(BlockRedstoneWire.POWER, Integer.valueOf(i & 15)); // correct bad block data
     }
 
     public int toLegacyData(IBlockData iblockdata) {

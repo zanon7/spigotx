@@ -102,7 +102,7 @@ public class BlockCake extends Block {
     }
 
     public IBlockData fromLegacyData(int i) {
-        return this.getBlockData().set(BlockCake.BITES, Integer.valueOf(i));
+        return this.getBlockData().set(BlockCake.BITES, Integer.valueOf(MathHelper.clamp(i, 0, 6))); // correct bad block data
     }
 
     public int toLegacyData(IBlockData iblockdata) {

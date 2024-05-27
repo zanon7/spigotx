@@ -60,7 +60,7 @@ public class BlockAnvil extends BlockFalling {
     }
 
     public IBlockData fromLegacyData(int i) {
-        return this.getBlockData().set(BlockAnvil.FACING, EnumDirection.fromType2(i & 3)).set(BlockAnvil.DAMAGE, Integer.valueOf((i & 15) >> 2));
+        return this.getBlockData().set(BlockAnvil.FACING, EnumDirection.fromType2(i & 3)).set(BlockAnvil.DAMAGE, Integer.valueOf(MathHelper.clamp(i & 15, 0, 11) >> 2)); // correct bad block data
     }
 
     public int toLegacyData(IBlockData iblockdata) {

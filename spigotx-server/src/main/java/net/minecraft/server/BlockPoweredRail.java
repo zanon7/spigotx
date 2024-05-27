@@ -138,7 +138,7 @@ public class BlockPoweredRail extends BlockMinecartTrackAbstract {
     }
 
     public IBlockData fromLegacyData(int i) {
-        return this.getBlockData().set(BlockPoweredRail.SHAPE, BlockMinecartTrackAbstract.EnumTrackPosition.a(i & 7)).set(BlockPoweredRail.POWERED, Boolean.valueOf((i & 8) > 0));
+        return this.getBlockData().set(BlockPoweredRail.SHAPE, BlockMinecartTrackAbstract.EnumTrackPosition.a(MathHelper.clamp(i & 7, 0, 5))).set(BlockPoweredRail.POWERED, Boolean.valueOf((i & 8) > 0)); // correct bad block data
     }
 
     public int toLegacyData(IBlockData iblockdata) {

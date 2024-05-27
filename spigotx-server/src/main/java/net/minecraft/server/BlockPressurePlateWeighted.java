@@ -67,7 +67,7 @@ public class BlockPressurePlateWeighted extends BlockPressurePlateAbstract {
     }
 
     public IBlockData fromLegacyData(int i) {
-        return this.getBlockData().set(BlockPressurePlateWeighted.POWER, Integer.valueOf(i));
+        return this.getBlockData().set(BlockPressurePlateWeighted.POWER, Integer.valueOf(i & 15)); // correct bad block data
     }
 
     public int toLegacyData(IBlockData iblockdata) {

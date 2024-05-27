@@ -126,7 +126,10 @@ public class BlockHopper extends BlockContainer {
     }
 
     public static EnumDirection b(int i) {
-        return EnumDirection.fromType1(i & 7);
+        // Blossom start - correct bad block data
+        EnumDirection facing = EnumDirection.fromType1(i & 7);
+        return facing == EnumDirection.UP ? EnumDirection.DOWN : facing;
+        // Blossom end
     }
 
     public static boolean f(int i) {
