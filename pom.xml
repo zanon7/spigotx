@@ -32,4 +32,10 @@
         </dependency>
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>mc-repo</id>
+            <url>https://maven.elmakers.com/repository/</url>
+        </repository>
+    </repositories>
 </project>

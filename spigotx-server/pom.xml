@@ -51,6 +51,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.77.Final</version>
+        </dependency>
+        <dependency>
             <groupId>jline</groupId>
             <artifactId>jline</artifactId>
             <version>2.12</version>
@@ -112,13 +117,6 @@
             <version>2.1.0</version>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>mc-repo</id>
-            <url>https://maven.elmakers.com/repository/</url>
-        </repository>
-    </repositories>
 
     <!-- required until fixed plexus-compiler-eclipse is deployed -->
     <pluginRepositories>
