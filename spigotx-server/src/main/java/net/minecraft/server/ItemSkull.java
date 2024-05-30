@@ -118,7 +118,7 @@ public class ItemSkull extends Item {
 
     public boolean a(final NBTTagCompound nbttagcompound) { // Spigot - make final
         super.a(nbttagcompound);
-        if (nbttagcompound.hasKeyOfType("SkullOwner", 8) && nbttagcompound.getString("SkullOwner").length() > 0) {
+        if (nbttagcompound.hasKeyOfType("SkullOwner", 8) && !org.apache.commons.lang3.StringUtils.isBlank(nbttagcompound.getString("SkullOwner"))) { // prevent blank game profiles
             GameProfile gameprofile = new GameProfile((UUID) null, nbttagcompound.getString("SkullOwner"));
 
             // Spigot start

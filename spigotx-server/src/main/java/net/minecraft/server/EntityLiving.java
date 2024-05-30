@@ -597,6 +597,11 @@ public abstract class EntityLiving extends Entity {
 
     public void addEffect(MobEffect mobeffect) {
         org.spigotmc.AsyncCatcher.catchOp("effect add"); // Spigot
+        // prevent health boost being able to cause the respawn screen to visually show up
+        int amplifier = mobeffect.getAmplifier();
+        if (mobeffect.getEffectId() == MobEffectList.HEALTH_BOOST.getId() && (amplifier < 0 || amplifier > 127)) {
+            return;
+        }
         // CraftBukkit start
         if (isTickingEffects) {
             effectsToProcess.add(mobeffect);

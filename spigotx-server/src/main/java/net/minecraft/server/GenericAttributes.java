@@ -108,7 +108,23 @@ public class GenericAttributes {
         UUID uuid = new UUID(nbttagcompound.getLong("UUIDMost"), nbttagcompound.getLong("UUIDLeast"));
 
         try {
-            return new AttributeModifier(uuid, nbttagcompound.getString("Name"), nbttagcompound.getDouble("Amount"), nbttagcompound.getInt("Operation"));
+            // fill in name and operation for bad attribute modifiers
+            // Modifiers should have sane defaults but as you might be able to notice from this existing they don't.
+            // What I think is the best part here is that every malformed attribute you have spams console,
+            // and if you set the amount to an infinite value it will be run every server tick.
+            String name = nbttagcompound.getString("Name");
+
+            // "Name" is the description
+            if (name == null || name.length() == 0) {
+                name = uuid.toString();
+            }
+
+            int operation = nbttagcompound.getInt("Operation");
+            if (operation < 0 || operation > 2L) {
+                operation = 0;
+            }
+
+            return new AttributeModifier(uuid, name, nbttagcompound.getDouble("Amount"), operation);
         } catch (Exception exception) {
             GenericAttributes.f.warn("Unable to create attribute: " + exception.getMessage());
             return null;

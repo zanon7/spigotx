@@ -206,7 +206,7 @@ public class EnchantmentManager {
     }
 
     public static int getBonusBlockLootEnchantmentLevel(EntityLiving entityliving) {
-        return getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS.id, entityliving.bA());
+        return Math.min(getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS.id, entityliving.bA()), 10); // restrict fortune to a reason number
     }
 
     public static int g(EntityLiving entityliving) {
@@ -218,7 +218,7 @@ public class EnchantmentManager {
     }
 
     public static int getBonusMonsterLootEnchantmentLevel(EntityLiving entityliving) {
-        return getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS.id, entityliving.bA());
+        return Math.min(getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS.id, entityliving.bA()), 10); // restrict looting to a reason number
     }
 
     public static boolean j(EntityLiving entityliving) {

@@ -1314,7 +1314,7 @@ public abstract class Entity implements ICommandListener, OptimizedRemoveUtil.Ma
 				}
 			}
 
-			if (!(getBukkitEntity() instanceof Vehicle)) {
+			if (true || !(getBukkitEntity() instanceof Vehicle)) { // allow me to state my opinion on the comment above, that is stupid.
 				if (Math.abs(this.motX) > 10.0D) {
 					this.motX = 0.0D;
 				}

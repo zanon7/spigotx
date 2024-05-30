@@ -101,7 +101,7 @@ public class TileEntitySkull extends TileEntity {
             } else if (nbttagcompound.hasKeyOfType("ExtraType", 8)) {
                 String s = nbttagcompound.getString("ExtraType");
 
-                if (!UtilColor.b(s)) {
+                if (!UtilColor.b(s) && !org.apache.commons.lang3.StringUtils.isBlank(s)) { // prevent blank game profiles
                     this.g = new GameProfile((UUID) null, s);
                     this.e();
                 }

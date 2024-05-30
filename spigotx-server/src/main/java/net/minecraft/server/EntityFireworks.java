@@ -36,7 +36,22 @@ public class EntityFireworks extends Entity {
             NBTTagCompound nbttagcompound1 = nbttagcompound.getCompound("Fireworks");
 
             if (nbttagcompound1 != null) {
-                i += nbttagcompound1.getByte("Flight");
+                i += Math.min(nbttagcompound1.getByte("Flight"), 3);
+            }
+
+            NBTTagList explosions = nbttagcompound1.getList("Explosions", 10);
+
+            // This cannot crash the server, but it can crash and lag clients.
+            if (explosions.size() > 16) {
+                NBTTagList capped = new NBTTagList();
+
+                for (int j = 0; j < 16; ++j) {
+                    capped.add(explosions.get(i));
+                }
+
+                nbttagcompound1.set("Explosions", capped);
+                itemstack.setTag(nbttagcompound);
+                this.datawatcher.watch(8, itemstack);
             }
         }
 
@@ -108,8 +123,8 @@ public class EntityFireworks extends Entity {
     }
 
     public void a(NBTTagCompound nbttagcompound) {
-        this.ticksFlown = nbttagcompound.getInt("Life");
-        this.expectedLifespan = nbttagcompound.getInt("LifeTime");
+        this.ticksFlown = Math.max(nbttagcompound.getInt("Life"), 0); // make sure this is never negative
+        this.expectedLifespan = Math.max(nbttagcompound.getInt("LifeTime"), 60); // and cap this to a reasonable number
         NBTTagCompound nbttagcompound1 = nbttagcompound.getCompound("FireworksItem");
 
         if (nbttagcompound1 != null) {

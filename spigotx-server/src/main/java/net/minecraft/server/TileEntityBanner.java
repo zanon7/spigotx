@@ -19,11 +19,7 @@ public class TileEntityBanner extends TileEntity {
             NBTTagCompound nbttagcompound = itemstack.getTag().getCompound("BlockEntityTag");
 
             if (nbttagcompound.hasKey("Patterns")) {
-                this.patterns = (NBTTagList) nbttagcompound.getList("Patterns", 10).clone();
-                // CraftBukkit start
-                while (this.patterns.size() > 20) {
-                    this.patterns.a(20); // PAIL Rename remove
-                }
+                this.patterns = loadPatternsFromCompound(nbttagcompound); // avoid o(n^2) removal of unnecessary patterns
                 // CraftBukkit end
             }
 
@@ -42,6 +38,15 @@ public class TileEntityBanner extends TileEntity {
         this.g = true;
     }
 
+    private NBTTagList loadPatternsFromCompound(NBTTagCompound nbttagcompound) {
+        NBTTagList list = nbttagcompound.getList("Patterns", 10);
+        NBTTagList patterns = new NBTTagList();
+        int min = Math.min(list.size(), 20);
+        for (int i = 0; i < min; ++i) {
+            patterns.add(list.get(i));
+        }
+        return patterns;
+    }
     public void b(NBTTagCompound nbttagcompound) {
         super.b(nbttagcompound);
         a(nbttagcompound, this.color, this.patterns);
@@ -58,12 +63,7 @@ public class TileEntityBanner extends TileEntity {
     public void a(NBTTagCompound nbttagcompound) {
         super.a(nbttagcompound);
         this.color = nbttagcompound.getInt("Base");
-        this.patterns = nbttagcompound.getList("Patterns", 10);
-        // CraftBukkit start
-        while (this.patterns.size() > 20) {
-            this.patterns.a(20); // PAIL Rename remove
-        }
-        // CraftBukkit end
+        this.patterns = loadPatternsFromCompound(nbttagcompound); // avoid o(n^2) removal of unnecessary patterns
         this.h = null;
         this.i = null;
         this.j = null;

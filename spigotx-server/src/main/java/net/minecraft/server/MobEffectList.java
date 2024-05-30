@@ -118,7 +118,7 @@ public class MobEffectList {
             }
         } else if ((this.id != MobEffectList.HEAL.id || entityliving.bm()) && (this.id != MobEffectList.HARM.id || !entityliving.bm())) {
             if (this.id == MobEffectList.HARM.id && !entityliving.bm() || this.id == MobEffectList.HEAL.id && entityliving.bm()) {
-                entityliving.damageEntity(DamageSource.MAGIC, (float) (6 << i));
+                entityliving.damageEntity(DamageSource.MAGIC, (float) Math.abs(6 << i)); // prevent "creative kill" potions
             }
         } else {
             entityliving.heal((float) Math.max(4 << i, 0), RegainReason.MAGIC); // CraftBukkit
@@ -131,7 +131,7 @@ public class MobEffectList {
 
         if ((this.id != MobEffectList.HEAL.id || entityliving.bm()) && (this.id != MobEffectList.HARM.id || !entityliving.bm())) {
             if (this.id == MobEffectList.HARM.id && !entityliving.bm() || this.id == MobEffectList.HEAL.id && entityliving.bm()) {
-                j = (int) (d0 * (double) (6 << i) + 0.5D);
+                j = (int) (d0 * (double) Math.abs(6 << i) + 0.5D); // prevent "creative kill" potions
                 if (entity == null) {
                     entityliving.damageEntity(DamageSource.MAGIC, (float) j);
                 } else {
@@ -139,7 +139,7 @@ public class MobEffectList {
                 }
             }
         } else {
-            j = (int) (d0 * (double) (4 << i) + 0.5D);
+            j = (int) (d0 * (double) Math.abs(4 << i) + 0.5D); // prevent "creative kill" potions
             entityliving.heal((float) j, RegainReason.MAGIC); // CraftBukkit
         }
 

@@ -50,7 +50,7 @@ public class EntitySlime extends EntityInsentient implements IMonster {
 
     public void a(NBTTagCompound nbttagcompound) {
         super.a(nbttagcompound);
-        int i = nbttagcompound.getInt("Size");
+        int i = Math.min(nbttagcompound.getInt("Size"), 20); // limit this to a reasonable number
 
         if (i < 0) {
             i = 0;

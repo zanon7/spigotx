@@ -46,7 +46,7 @@ public class EntityLargeFireball extends EntityFireball {
         super.a(nbttagcompound);
         if (nbttagcompound.hasKeyOfType("ExplosionPower", 99)) {
             // CraftBukkit - set bukkitYield when setting explosionpower
-            bukkitYield = this.yield = nbttagcompound.getInt("ExplosionPower");
+            bukkitYield = Math.min(this.yield = nbttagcompound.getInt("ExplosionPower"), 10); // limit this to a reasonable number
         }
 
     }

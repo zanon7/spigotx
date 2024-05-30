@@ -29,6 +29,7 @@ public class AttributeRanged extends AttributeBase {
     }
 
     public double a(double d0) {
+        if (Double.isNaN(d0)) return a; // may be a good idea to do a NaN check here
         d0 = MathHelper.a(d0, this.a, this.b);
         return d0;
     }
