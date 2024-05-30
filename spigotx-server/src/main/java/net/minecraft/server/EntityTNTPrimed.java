@@ -179,7 +179,8 @@ public class EntityTNTPrimed extends Entity {
     @Override
     public boolean W() {
         if (!world.paperSpigotConfig.fixCannons) return super.W();
-
+        // Optimise TNT Ticking
+        /*
         // Preserve velocity while calling the super method
         double oldMotX = this.motX;
         double oldMotY = this.motY;
@@ -207,6 +208,7 @@ public class EntityTNTPrimed extends Entity {
                 }
             }
         }
+        */
 
         return this.inWater;
     }
