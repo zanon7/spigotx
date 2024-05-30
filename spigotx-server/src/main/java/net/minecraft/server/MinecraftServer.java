@@ -325,37 +325,7 @@ public abstract class MinecraftServer extends com.minexd.spigot.tickloop.Reentra
     }
 
     protected void k() {
-        int i;
-
         this.b("menu.generatingTerrain");
-
-        for (int m = 0; m < worlds.size(); m++) {
-            WorldServer worldserver = this.worlds.get(m);
-            LOGGER.info("Preparing start region for level " + m + " (Seed: " + worldserver.getSeed() + ")");
-
-            if (!worldserver.getWorld().getKeepSpawnInMemory()) {
-                continue;
-            }
-
-            BlockPosition blockposition = worldserver.getSpawn();
-            long j = az();
-            i = 0;
-
-            for (int k = -192; k <= 192 && this.isRunning(); k += 16) {
-                for (int l = -192; l <= 192 && this.isRunning(); l += 16) {
-                    long i1 = az();
-
-                    if (i1 - j > 1000L) {
-                        this.a_("Preparing spawn area", i * 100 / 625);
-                        j = i1;
-                    }
-
-                    ++i;
-
-                    worldserver.chunkProviderServer.getChunkAt(blockposition.getX() + k >> 4, blockposition.getZ() + l >> 4);
-                }
-            }
-        }
 
         for (WorldServer world : this.worlds) {
             this.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(world.getWorld()));
